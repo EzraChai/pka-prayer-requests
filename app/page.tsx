@@ -4,15 +4,6 @@ import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
-import { Button } from "@/components/ui/button";
-import {
-  DialogContent,
-  DialogTrigger,
-  Dialog,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { AddNewPrayerForm } from "../components/addForm";
 
 export default function Home() {
@@ -29,7 +20,7 @@ export default function Home() {
           </p>
         </section>
 
-        <div className="grid columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
+        <div className=" columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
           {prayers
             ? prayers.map((prayer) => (
                 <PrayerCard key={prayer._id} prayer={prayer} />

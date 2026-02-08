@@ -55,9 +55,9 @@ export const checkAndAddPrayer = action({
   args: {
     content: v.string(),
     title: v.string(),
-    bibleVerses: v.optional(v.string()),
+    bibleVerses: v.string(),
     expiresAt: v.optional(v.number()),
-    username: v.optional(v.string()),
+    username: v.string(),
     userId: v.string(),
     isPublic: v.boolean(),
   },
@@ -77,27 +77,30 @@ export const checkAndAddPrayer = action({
       throw new Error("User not found.");
     }
 
-    const parsedVerse = parseBibleVerseCUVS(args.bibleVerses || "");
-    if (!parsedVerse) {
-      throw new Error("Invalid bible verse format.");
+    let versesTextCUVS = "";
+    if (args.bibleVerses !== undefined && args.bibleVerses !== "") {
+      const parsedVerse = parseBibleVerseCUVS(args.bibleVerses || "");
+      if (!parsedVerse) {
+        throw new Error("Invalid bible verse format.");
+      }
+      const { book, chapter, verses } = parsedVerse;
+      const res = await fetch(
+        `https://bible.helloao.org/api/cmn_cu1/${book}/${chapter}.json`,
+      );
+
+      const data = await res.json();
+      versesTextCUVS = verses
+        .map((verseNumber) => {
+          const verseObj = data.chapter.content.find(
+            (v: { number: number }) => v.number === verseNumber,
+          );
+          return verseObj ? `${verseNumber} ${verseObj.content[0]}` : null;
+        })
+        .filter((text: string | null) => text !== null)
+        .join(" ");
+
+      console.log(versesTextCUVS);
     }
-    const { shortBook, chapter, verses } = parsedVerse;
-    const res = await fetch(
-      `https://bible.helloao.org/api/cmn_cu1/${shortBook}/${chapter}.json`,
-    );
-
-    const data = await res.json();
-    const versesTextCUVS = verses
-      .map((verseNumber) => {
-        const verseObj = data.chapter.content.find(
-          (v: { number: number }) => v.number === verseNumber,
-        );
-        return verseObj ? `${verseNumber} ${verseObj.content[0]}` : null;
-      })
-      .filter((text: string | null) => text !== null)
-      .join(" ");
-
-    console.log(versesTextCUVS);
 
     const prayerId = await ctx.runMutation(internal.myFunctions.addPrayer, {
       content: args.content,

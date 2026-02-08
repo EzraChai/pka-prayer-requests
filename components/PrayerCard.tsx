@@ -38,14 +38,16 @@ export default function PrayerCard({
       <CardContent className="mb-4 text-neutral-800">
         {prayer.content}
       </CardContent>
-      <div className="border-black border-y-3 p-4 bg-yellow-200">
-        <p className="italic font-semibold">
-          {lang === "en" ? prayer.bibleVerseESV : prayer.bibleVerseCUVS}
-        </p>
-        <p className="mt-2 italic font-semibold">
-          {lang === "en" ? prayer.bibleVerseESVRef : prayer.bibleVerseCUVSRef}
-        </p>
-      </div>
+      {prayer.bibleVerseCUVS && (
+        <div className="border-black border-y-3 p-4 bg-yellow-200">
+          <p className="italic font-semibold">
+            {lang === "en" ? prayer.bibleVerseESV : prayer.bibleVerseCUVS}
+          </p>
+          <p className="mt-2 italic font-semibold">
+            {lang === "en" ? prayer.bibleVerseESVRef : prayer.bibleVerseCUVSRef}
+          </p>
+        </div>
+      )}
       <CardAction className="px-4 pb-2 flex w-full items-center justify-between">
         <Button
           className="relative bg-white hover:bg-white text-neutral-800 border-2"
