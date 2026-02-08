@@ -61,10 +61,16 @@ export function AddNewPrayerForm() {
     },
     onSubmit: async ({ value }) => {
       try {
+        let userId;
+        userId = localStorage.getItem("userId");
+        if (!userId) {
+          userId = crypto.randomUUID();
+          localStorage.setItem("userId", userId);
+        }
         // Replace 'userId' with the actual user id, e.g. from context or props
         await addPrayerRequest({
           ...value,
-          userId: "123", // TODO: Replace with actual user id
+          userId: userId ?? "", // TODO: Replace with actual user id
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
         });
       } catch (error) {

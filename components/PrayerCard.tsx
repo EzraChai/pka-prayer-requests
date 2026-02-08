@@ -4,26 +4,9 @@ import { Button } from "./ui/button";
 import moment from "moment";
 import { LanguageContext } from "./LanguageContextProvider";
 import { use } from "react";
+import { PrayerWithStatus } from "@/convex/myFunctions";
 
-export default function PrayerCard({
-  prayer,
-}: {
-  prayer: {
-    _id: Id<"prayers">;
-    _creationTime: number;
-    bibleVerseESV?: string | undefined;
-    bibleVerseCUVS?: string | undefined;
-    expiresAt?: number | undefined;
-    createdAt: number;
-    content: string;
-    title: string;
-    prayedCount: number;
-    username?: string | undefined;
-    bibleVerseCUVSRef?: string | undefined;
-    bibleVerseESVRef?: string | undefined;
-    createdBy: Id<"users">;
-  };
-}) {
+export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
   return (
@@ -50,12 +33,20 @@ export default function PrayerCard({
       )}
       <CardAction className="px-4 pb-2 flex w-full items-center justify-between">
         <Button
+          disabled={prayer.prayed}
           className="relative bg-white hover:bg-white text-neutral-800 border-2"
           onClick={(e) => {
+            let userId = localStorage.getItem("userId");
+            if (!userId) {
+              userId = crypto.randomUUID();
+              localStorage.setItem("userId", userId);
+            }
+            console.log(userId);
+
             spawnPrayParticles(e.clientX, e.clientY);
           }}
         >
-          🙏 Pray
+          {prayer.prayed ? "🙏 Prayed" : "🙏 Pray"}
         </Button>
 
         <p className=" text-xs text-neutral-600">

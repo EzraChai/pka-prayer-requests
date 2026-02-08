@@ -32,8 +32,7 @@ export default defineSchema({
   prayer_clicks: defineTable({
     prayerId: v.id("prayers"),
     userId: v.id("users"),
-    clickedAt: v.number(),
-  }).index("by_prayer_user", ["prayerId", "userId"]),
+  }).index("by_prayer_user", ["userId", "prayerId"]),
 
   linkTokens: defineTable({
     token: v.string(),

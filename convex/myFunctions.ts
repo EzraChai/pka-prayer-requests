@@ -1,24 +1,25 @@
 import { v } from "convex/values";
 import {
   query,
-  mutation,
   action,
   internalQuery,
   internalMutation,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { parseBibleVerseCUVS } from "../lib/utils";
+import { Doc, Id } from "./_generated/dataModel";
 
 // Write your Convex functions in any file inside this directory (`convex`).
 // See https://docs.convex.dev/functions for more.
 
-export const addUser = mutation({
+export const addUser = internalMutation({
   args: {
     userId: v.string(),
   },
   handler: async (ctx, args) => {
     const existingUser = await ctx.db
       .query("users")
+
       .withIndex("byuserId", (q) => q.eq("userId", args.userId))
       .first();
 
@@ -35,19 +36,65 @@ export const addUser = mutation({
   },
 });
 
-export const getAllPrayers = query({
-  args: {},
-  handler: async (ctx) => {
+export type PrayerWithStatus = Doc<"prayers"> & { prayed: boolean };
+
+export const getAllPrayers = action({
+  args: {
+    userId: v.optional(v.string()),
+  },
+  handler: async (ctx, args): Promise<PrayerWithStatus[]> => {
+    let user: {
+      _id: Id<"users">;
+      _creationTime: number;
+      userId: string;
+      createdAt: number;
+    } | null = null;
+
+    if (args.userId) {
+      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+        userId: args.userId,
+      });
+    }
+
+    return await ctx.runQuery(
+      internal.myFunctions.getAllPrayersAndPrayerClicked,
+      {
+        userId: user?._id,
+      },
+    );
+  },
+});
+
+export const getAllPrayersAndPrayerClicked = internalQuery({
+  args: {
+    userId: v.optional(v.id("users")),
+  },
+  handler: async (ctx, args) => {
     const prayers = await ctx.db
       .query("prayers")
       .withIndex("by_createdAtAndIsPublic", (q) => q.eq("isPublic", true))
       .order("desc")
       .collect();
 
-    // Filter prayers by isPublic after collecting
-    const publicPrayers = prayers.filter((prayer) => prayer.isPublic);
+    if (args.userId) {
+      const userPrays = await ctx.db
+        .query("prayer_clicks")
+        .withIndex("by_prayer_user", (q) => q.eq("userId", args.userId!))
+        .collect();
 
-    return publicPrayers;
+      const prayedSet = new Set(userPrays.map((p) => p.prayerId));
+
+      // Add `prayed` field to each prayer
+      return prayers.map((prayer) => ({
+        ...prayer,
+        prayed: prayedSet.has(prayer._id),
+      }));
+    } else {
+      return prayers.map((prayer) => ({
+        ...prayer,
+        prayed: false,
+      }));
+    }
   },
 });
 
@@ -69,12 +116,28 @@ export const checkAndAddPrayer = action({
     if (isProfanity) {
       throw new Error("Profanity detected in prayer request.");
     }
+    let user: {
+      _id: Id<"users">;
+      _creationTime: number;
+      userId: string;
+      createdAt: number;
+    } | null = null;
 
-    const user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+    user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
       userId: args.userId,
     });
+
     if (!user) {
-      throw new Error("User not found.");
+      await ctx.runMutation(internal.myFunctions.addUser, {
+        userId: args.userId,
+      });
+      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+        userId: args.userId,
+      });
+    }
+
+    if (!user) {
+      throw new Error("Failed to create or retrieve user.");
     }
 
     let versesTextCUVS = "";
@@ -89,15 +152,27 @@ export const checkAndAddPrayer = action({
       );
 
       const data = await res.json();
-      versesTextCUVS = verses
-        .map((verseNumber) => {
-          const verseObj = data.chapter.content.find(
-            (v: { number: number }) => v.number === verseNumber,
-          );
-          return verseObj ? `${verseNumber} ${verseObj.content[0]}` : null;
-        })
-        .filter((text: string | null) => text !== null)
-        .join(" ");
+
+      if (verses.length === 1) {
+        const verseObj = data.chapter.content.find(
+          (v: { number: number }) => v.number === verses[0],
+        );
+        if (verseObj && verseObj.content && verseObj.content.length > 0) {
+          versesTextCUVS = verseObj.content[0];
+        }
+      } else if (verses.length > 1) {
+        versesTextCUVS = verses
+          .map((verseNumber) => {
+            const verseObj = data.chapter.content.find(
+              (v: { number: number }) => v.number === verseNumber,
+            );
+            return verseObj && verseObj.content && verseObj.content.length > 0
+              ? `${verseNumber} ${verseObj.content[0]}`
+              : null;
+          })
+          .filter((text: string | null) => text !== null)
+          .join(" ");
+      }
 
       console.log(versesTextCUVS);
     }
