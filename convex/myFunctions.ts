@@ -87,7 +87,7 @@ export const checkAndAddPrayer = action({
         const verseObj = data.chapter.content.find(
           (v: { number: number }) => v.number === verseNumber,
         );
-        return verseObj ? `${verseNumber}. ${verseObj.content[0]}` : null;
+        return verseObj ? `${verseNumber} ${verseObj.content[0]}` : null;
       })
       .filter((text: string | null) => text !== null)
       .join(" ");
@@ -99,6 +99,8 @@ export const checkAndAddPrayer = action({
       title: args.title,
       bibleVerseCUVS: versesTextCUVS,
       bibleVerseESV: "",
+      bibleVerseCUVSRef: args.bibleVerses || "",
+      // bibleVerseESVRef: args.bibleVerseESVRef || "",
       expiresAt: args.expiresAt,
       createdBy: user._id,
     });
@@ -124,6 +126,8 @@ export const addPrayer = internalMutation({
     title: v.string(),
     bibleVerseCUVS: v.optional(v.string()),
     bibleVerseESV: v.optional(v.string()),
+    bibleVerseCUVSRef: v.optional(v.string()),
+    bibleVerseESVRef: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
     createdBy: v.id("users"),
   },
@@ -133,6 +137,8 @@ export const addPrayer = internalMutation({
       title: args.title,
       bibleVerseESV: args.bibleVerseESV || "",
       bibleVerseCUVS: args.bibleVerseCUVS || "",
+      bibleVerseCUVSRef: args.bibleVerseCUVSRef || "",
+      bibleVerseESVRef: args.bibleVerseESVRef || "",
       prayedCount: 0,
       createdBy: args.createdBy,
       createdAt: Date.now(),

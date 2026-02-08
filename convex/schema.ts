@@ -16,6 +16,8 @@ export default defineSchema({
     title: v.string(),
     bibleVerseESV: v.optional(v.string()),
     bibleVerseCUVS: v.optional(v.string()),
+    bibleVerseESVRef: v.optional(v.string()),
+    bibleVerseCUVSRef: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
     prayedCount: v.number(),
     createdBy: v.id("users"),

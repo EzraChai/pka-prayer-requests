@@ -123,3 +123,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+.pray-particle {
+  position: fixed;
+  font-size: 24px;
+  font-weight: 700;
+  color: black;
+  pointer-events: none;
+  animation: pray-float 1s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes pray-float {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(calc(var(--dx) - 50%), calc(var(--dy) - 50%))
+      scale(0.4);
+    opacity: 0;
+  }
+}
