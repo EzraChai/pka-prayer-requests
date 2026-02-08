@@ -1,17 +1,22 @@
 "use client";
 
-import { Preloaded, useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
-import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
 import { Button } from "@/components/ui/button";
-import { Plus, PlusIcon } from "lucide-react";
+import {
+  DialogContent,
+  DialogTrigger,
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { AddNewPrayerForm } from "../components/addForm";
 
 export default function Home() {
   const prayers = useQuery(api.myFunctions.getAllPrayers);
-  console.log(prayers);
   return (
     <>
       <Navbar />
@@ -32,9 +37,7 @@ export default function Home() {
             : null}
         </div>
         <div className="fixed bottom-12 right-12">
-          <Button className=" text-3xl bg-neutral-800 border-3 font-black p-8">
-            + Prayer
-          </Button>
+          <AddNewPrayerForm />
         </div>
       </main>
     </>

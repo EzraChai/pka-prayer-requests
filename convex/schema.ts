@@ -19,11 +19,13 @@ export default defineSchema({
     bibleVerseESVRef: v.optional(v.string()),
     bibleVerseCUVSRef: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
+    username: v.optional(v.string()),
     prayedCount: v.number(),
+    isPublic: v.boolean(),
     createdBy: v.id("users"),
     createdAt: v.number(),
   })
-    .index("by_createdAt", ["createdAt"])
+    .index("by_createdAtAndIsPublic", ["isPublic", "createdAt"])
     .index("by_createdBy", ["createdBy"])
     .index("by_expiresAt", ["expiresAt"]),
 

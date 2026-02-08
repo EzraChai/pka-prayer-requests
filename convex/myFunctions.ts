@@ -40,11 +40,14 @@ export const getAllPrayers = query({
   handler: async (ctx) => {
     const prayers = await ctx.db
       .query("prayers")
-      .withIndex("by_createdAt")
+      .withIndex("by_createdAtAndIsPublic", (q) => q.eq("isPublic", true))
       .order("desc")
       .collect();
 
-    return prayers;
+    // Filter prayers by isPublic after collecting
+    const publicPrayers = prayers.filter((prayer) => prayer.isPublic);
+
+    return publicPrayers;
   },
 });
 
@@ -54,7 +57,9 @@ export const checkAndAddPrayer = action({
     title: v.string(),
     bibleVerses: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
+    username: v.optional(v.string()),
     userId: v.string(),
+    isPublic: v.boolean(),
   },
 
   handler: async (ctx, args): Promise<string> => {
@@ -101,8 +106,10 @@ export const checkAndAddPrayer = action({
       bibleVerseESV: "",
       bibleVerseCUVSRef: args.bibleVerses || "",
       // bibleVerseESVRef: args.bibleVerseESVRef || "",
+      username: args.username,
       expiresAt: args.expiresAt,
       createdBy: user._id,
+      isPublic: args.isPublic,
     });
     return prayerId;
   },
@@ -129,7 +136,9 @@ export const addPrayer = internalMutation({
     bibleVerseCUVSRef: v.optional(v.string()),
     bibleVerseESVRef: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
+    username: v.optional(v.string()),
     createdBy: v.id("users"),
+    isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
     const prayerId = await ctx.db.insert("prayers", {
@@ -143,6 +152,8 @@ export const addPrayer = internalMutation({
       createdBy: args.createdBy,
       createdAt: Date.now(),
       expiresAt: args.expiresAt,
+      username: args.username,
+      isPublic: args.isPublic,
     });
     return prayerId;
   },

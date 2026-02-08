@@ -28,7 +28,7 @@ export default function ChangeBibleVersions() {
         className="rounded-none border-black border-3 bg-white"
       >
         <SelectGroup>
-          <SelectLabel> Bible Versions </SelectLabel>
+          <SelectLabel>Bible Versions</SelectLabel>
           <SelectItem value="en">English (ESV)</SelectItem>
           <SelectItem value="cn">中文 (CUVS)</SelectItem>
         </SelectGroup>

@@ -1,6 +1,9 @@
 import { Id } from "@/convex/_generated/dataModel";
 import { Card, CardAction, CardContent, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
+import moment from "moment";
+import { LanguageContext } from "./LanguageContextProvider";
+import { use } from "react";
 
 export default function PrayerCard({
   prayer,
@@ -15,20 +18,35 @@ export default function PrayerCard({
     content: string;
     title: string;
     prayedCount: number;
+    username?: string | undefined;
     bibleVerseCUVSRef?: string | undefined;
     bibleVerseESVRef?: string | undefined;
     createdBy: Id<"users">;
   };
 }) {
+  const context = use(LanguageContext);
+  const lang = context?.lang ?? "en";
   return (
     <Card className="mb-6 w-full max-w-sm break-inside-avoid bg-yellow-300">
-      <CardHeader className="text-2xl font-semibold">{prayer.title}</CardHeader>
-      <CardContent className="mb-4">{prayer.content}</CardContent>
-      <div className="border-black border-y-3 p-4 bg-yellow-200">
-        <p className="italic font-semibold">{prayer.bibleVerseCUVS}</p>
-        <p className="mt-2 italic font-semibold">{prayer.bibleVerseCUVSRef}</p>
+      <div className="px-6 text-xs text-neutral-700 flex justify-between">
+        <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
+        <div className="bg-white px-2 ">{prayer.prayedCount} AMEN</div>
       </div>
-      <CardAction className="p-4 flex w-full items-center justify-between">
+      <CardHeader className="mt-2 text-2xl font-semibold">
+        {prayer.title}
+      </CardHeader>
+      <CardContent className="mb-4 text-neutral-800">
+        {prayer.content}
+      </CardContent>
+      <div className="border-black border-y-3 p-4 bg-yellow-200">
+        <p className="italic font-semibold">
+          {lang === "en" ? prayer.bibleVerseESV : prayer.bibleVerseCUVS}
+        </p>
+        <p className="mt-2 italic font-semibold">
+          {lang === "en" ? prayer.bibleVerseESVRef : prayer.bibleVerseCUVSRef}
+        </p>
+      </div>
+      <CardAction className="px-4 pb-2 flex w-full items-center justify-between">
         <Button
           className="relative bg-white hover:bg-white text-neutral-800 border-2"
           onClick={(e) => {
@@ -37,9 +55,9 @@ export default function PrayerCard({
         >
           🙏 Pray
         </Button>
-        <p className="italic">
-          Prayed {prayer.prayedCount} time
-          {prayer.prayedCount === 1 ? "" : "s"}
+
+        <p className=" text-xs text-neutral-600">
+          {moment(prayer.createdAt).fromNow()}
         </p>
       </CardAction>
     </Card>
