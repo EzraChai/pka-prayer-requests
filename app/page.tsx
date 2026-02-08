@@ -1,27 +1,19 @@
 "use client";
 
-import { useAction } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
 import { AddNewPrayerForm } from "../components/addForm";
-import { useEffect, useState } from "react";
-import { PrayerWithStatus } from "@/convex/myFunctions";
 
 export default function Home() {
-  const getPrayers = useAction(api.myFunctions.getAllPrayers);
+  const prayers = useQuery(api.myFunctions.getAllPrayers, {
+    userId:
+      typeof window !== "undefined"
+        ? localStorage.getItem("userId")!
+        : undefined,
+  });
 
-  const [prayersData, setPrayersData] = useState<PrayerWithStatus[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const userId = localStorage.getItem("userId");
-      const data = userId ? await getPrayers({ userId }) : await getPrayers({});
-
-      setPrayersData(data);
-    };
-    fetchData();
-  }, [getPrayers]);
   return (
     <>
       <Navbar />
@@ -34,9 +26,9 @@ export default function Home() {
           </p>
         </section>
 
-        <div className=" columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
-          {prayersData
-            ? prayersData.map((prayer) => (
+        <div className=" columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12">
+          {prayers
+            ? prayers.map((prayer) => (
                 <PrayerCard key={prayer._id} prayer={prayer} />
               ))
             : null}

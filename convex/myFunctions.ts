@@ -38,7 +38,7 @@ export const addUser = internalMutation({
 
 export type PrayerWithStatus = Doc<"prayers"> & { prayed: boolean };
 
-export const getAllPrayers = action({
+export const getAllPrayers = query({
   args: {
     userId: v.optional(v.string()),
   },

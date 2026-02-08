@@ -10,7 +10,7 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
   return (
-    <Card className="mb-6 w-full max-w-sm break-inside-avoid bg-yellow-300">
+    <Card className="mb-12 w-full max-w-sm break-inside-avoid bg-yellow-300">
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
         <div className="bg-white px-2 ">{prayer.prayedCount} AMEN</div>
