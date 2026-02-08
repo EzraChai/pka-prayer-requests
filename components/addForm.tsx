@@ -67,10 +67,9 @@ export function AddNewPrayerForm() {
           userId = crypto.randomUUID();
           localStorage.setItem("userId", userId);
         }
-        // Replace 'userId' with the actual user id, e.g. from context or props
         await addPrayerRequest({
           ...value,
-          userId: userId ?? "", // TODO: Replace with actual user id
+          userId: userId ?? "",
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
         });
       } catch (error) {
@@ -81,9 +80,9 @@ export function AddNewPrayerForm() {
         return;
       }
 
-      toast.success("Form submitted successfully");
-      form.reset();
+      toast.success("Prayer request submitted successfully");
       setOpen(false);
+      form.reset();
     },
   });
 

@@ -10,8 +10,8 @@ export default function Home() {
   const prayers = useQuery(api.myFunctions.getAllPrayers, {
     userId:
       typeof window !== "undefined"
-        ? localStorage.getItem("userId")!
-        : undefined,
+        ? (localStorage.getItem("userId") ?? "")
+        : "",
   });
 
   return (

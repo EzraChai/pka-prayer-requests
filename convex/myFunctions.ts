@@ -19,7 +19,6 @@ export const addUser = internalMutation({
   handler: async (ctx, args) => {
     const existingUser = await ctx.db
       .query("users")
-
       .withIndex("byuserId", (q) => q.eq("userId", args.userId))
       .first();
 
@@ -36,21 +35,64 @@ export const addUser = internalMutation({
   },
 });
 
+export const addPrayerClick = action({
+  args: {
+    prayerId: v.id("prayers"),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    let user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+      userId: args.userId,
+    });
+    if (user === null) {
+      await ctx.runMutation(internal.myFunctions.addUser, {
+        userId: args.userId,
+      });
+      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+        userId: args.userId,
+      });
+      if (user === null) {
+        throw new Error("Failed to create or retrieve user.");
+      }
+    }
+
+    await ctx.runMutation(internal.myFunctions.clickedPrayer, {
+      prayerId: args.prayerId,
+      userId: user._id,
+    });
+  },
+});
+
+export const clickedPrayer = internalMutation({
+  args: {
+    prayerId: v.id("prayers"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("prayer_clicks", {
+      prayerId: args.prayerId,
+      userId: args.userId,
+    });
+
+    const prayer = await ctx.db.get(args.prayerId);
+    if (prayer) {
+      await ctx.db.patch(args.prayerId, {
+        prayedCount: prayer.prayedCount + 1,
+      });
+    }
+  },
+});
+
 export type PrayerWithStatus = Doc<"prayers"> & { prayed: boolean };
 
 export const getAllPrayers = query({
   args: {
-    userId: v.optional(v.string()),
+    userId: v.string(),
   },
   handler: async (ctx, args): Promise<PrayerWithStatus[]> => {
-    let user: {
-      _id: Id<"users">;
-      _creationTime: number;
-      userId: string;
-      createdAt: number;
-    } | null = null;
+    let user: Doc<"users"> | null = null;
 
-    if (args.userId) {
+    if (args.userId !== "") {
       user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
         userId: args.userId,
       });
@@ -59,7 +101,7 @@ export const getAllPrayers = query({
     return await ctx.runQuery(
       internal.myFunctions.getAllPrayersAndPrayerClicked,
       {
-        userId: user?._id,
+        userId: user?._id ?? undefined,
       },
     );
   },
@@ -76,7 +118,7 @@ export const getAllPrayersAndPrayerClicked = internalQuery({
       .order("desc")
       .collect();
 
-    if (args.userId) {
+    if (args.userId !== undefined) {
       const userPrays = await ctx.db
         .query("prayer_clicks")
         .withIndex("by_prayer_user", (q) => q.eq("userId", args.userId!))
