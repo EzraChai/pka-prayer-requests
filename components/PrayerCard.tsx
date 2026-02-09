@@ -17,7 +17,9 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
     <Card className="mb-12 w-full max-w-sm break-inside-avoid bg-yellow-300">
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
-        <div className="bg-white px-2 ">{prayer.prayedCount} AMEN</div>
+        <div className="bg-white px-2 font-semibold">
+          {prayer.prayedCount} AMEN
+        </div>
       </div>
       <CardHeader className="mt-2 text-2xl font-semibold">
         {prayer.title}
@@ -59,7 +61,7 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
           {isLoading ? (
             <Loader2 className=" animate-spin" />
           ) : prayer.prayed ? (
-            "🙏 Prayed"
+            "✅ Prayed"
           ) : (
             "🙏 Pray"
           )}
