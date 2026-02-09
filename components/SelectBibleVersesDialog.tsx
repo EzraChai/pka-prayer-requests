@@ -28,8 +28,10 @@ const fetchBibleChapter = async (
 
 export default function SelectBibleVersesDialog({
   onChange,
+  color,
 }: {
   onChange: (value: string) => void;
+  color: string;
 }) {
   const context = use(LanguageContext);
   const lang = context?.lang || "en";
@@ -37,9 +39,27 @@ export default function SelectBibleVersesDialog({
   const [searchTerm, setSearchTerm] = useState("");
   const [bookAbbr, setBookAbbr] = useState<string | null>(null);
   const [chapter, setChapter] = useState<number | null>(null);
-  const [verses, setVerses] = useState<
-    { content: string[]; type: string; number?: number }[]
-  >([]);
+  type VerseType =
+    | "heading"
+    | "hebrew_subtitle"
+    | "verse"
+    | string
+    | {
+        lineBreak?: boolean;
+        poem?: boolean;
+        text?: string;
+      };
+
+  type Verse = {
+    content: (
+      | string
+      | { lineBreak?: boolean; poem?: boolean; text?: string }
+    )[];
+    type: VerseType;
+    number?: number;
+  };
+
+  const [verses, setVerses] = useState<Verse[]>([]);
   const [selectedVersesFrom, setSelectedVersesFrom] = useState<number | null>(
     null,
   );
@@ -49,6 +69,7 @@ export default function SelectBibleVersesDialog({
   useEffect(() => {
     if (chapter && bookAbbr) {
       fetchBibleChapter(bookAbbr, chapter, lang).then((data) => {
+        console.log(data);
         setVerses(data.chapter.content);
       });
     }
@@ -97,6 +118,18 @@ export default function SelectBibleVersesDialog({
                   if (verseObj.type === "heading") {
                     return (
                       <h3 key={index} className="mt-4 font-bold my-2">
+                        {verseObj.content.map((line, lineIndex) => (
+                          <span key={lineIndex}>
+                            {typeof line === "string" && line}
+                            <br />
+                          </span>
+                        ))}
+                      </h3>
+                    );
+                  }
+                  if (verseObj.type === "hebrew_subtitle") {
+                    return (
+                      <h3 key={index} className="italic ">
                         {verseObj.content.map((line, lineIndex) => (
                           <span key={lineIndex}>
                             {typeof line === "string" && line}
@@ -166,7 +199,9 @@ export default function SelectBibleVersesDialog({
                             selectedVersesFrom < verseObj.number &&
                             selectedVersesTo &&
                             verseObj.number < selectedVersesTo)
-                            ? "bg-yellow-300 hover:bg-yellow-200"
+                            ? `${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-200"}
+                            ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-200"}
+                            ${color === "red" && "bg-red-300 hover:bg-red-200"}`
                             : ""
                         }`}
                       >
@@ -174,6 +209,12 @@ export default function SelectBibleVersesDialog({
                         <p className="text-left w-full">
                           {verseObj.content.map((line, lineIndex) => (
                             <span key={lineIndex}>
+                              {typeof line === "object" &&
+                                line.lineBreak &&
+                                lineIndex !== 0 && <br />}
+                              {typeof line === "object" && line.poem && (
+                                <span className="">{line.text}</span>
+                              )}
                               {typeof line === "string" && line}
                             </span>
                           ))}
@@ -217,7 +258,7 @@ export default function SelectBibleVersesDialog({
               {BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)?.totalChapters}{" "}
               {lang === "en" ? "Chapters available." : "章"}
             </div>
-            <div className="grid grid-cols-10 gap-2">
+            <div className="grid grid-cols-10 gap-2 max-h-96 overflow-scroll">
               {Array.from(
                 {
                   length:
@@ -227,7 +268,7 @@ export default function SelectBibleVersesDialog({
                 (_, i) => i + 1,
               ).map((chapter) => (
                 <Button
-                  className="p-0 flex justify-center border hover:bg-yellow-300 items-center px-2 py-1 cursor-pointer"
+                  className={`p-0 flex justify-center border ${(color === "yellow" || color === "white") && " hover:bg-yellow-200"} ${color === "cyan" && " hover:bg-cyan-200"} ${color === "red" && " hover:bg-red-200"} items-center px-2 py-1 cursor-pointer`}
                   key={chapter}
                   variant="ghost"
                   size="icon"
@@ -246,19 +287,19 @@ export default function SelectBibleVersesDialog({
             <div className="flex gap-2">
               <button
                 onClick={() => setTestaments("All")}
-                className={` ${testaments === "All" && "bg-yellow-300 "} border border-black text-xs transition-all py-1 px-2`}
+                className={` ${testaments === "All" && `${(color === "yellow" || color === "white") && "bg-yellow-300"} ${color === "cyan" && "bg-cyan-300"} ${color === "red" && "bg-red-300"}`} border border-black text-xs transition-all py-1 px-2`}
               >
                 {lang === "en" ? "All" : "全部"}
               </button>
               <button
                 onClick={() => setTestaments("OT")}
-                className={` ${testaments === "OT" && "bg-yellow-300 "} border border-black text-xs transition-all py-1 px-2`}
+                className={` ${testaments === "OT" && `${(color === "yellow" || color === "white") && "bg-yellow-300"} ${color === "cyan" && "bg-cyan-300"} ${color === "red" && "bg-red-300"}`} border border-black text-xs transition-all py-1 px-2`}
               >
                 {lang === "en" ? "Old Testament" : "旧约"}
               </button>
               <button
                 onClick={() => setTestaments("NT")}
-                className={` ${testaments === "NT" && "bg-yellow-300 "} border border-black text-xs transition-all py-1 px-2`}
+                className={` ${testaments === "NT" && `${color === "yellow" || (color === "white" && "bg-yellow-300")} ${color === "cyan" && "bg-cyan-300"} ${color === "red" && "bg-red-300"}`} border border-black text-xs transition-all py-1 px-2`}
               >
                 {lang === "en" ? "New Testament" : "新约"}
               </button>
@@ -303,7 +344,7 @@ export default function SelectBibleVersesDialog({
                   .map((book) => (
                     <div
                       key={book.abbr}
-                      className="hover:bg-yellow-300 mb-2 flex items-center px-2 py-1 cursor-pointer"
+                      className={`${(color === "yellow" || color === "white") && "hover:bg-yellow-300"} ${color === "cyan" && "hover:bg-cyan-300"} ${color === "red" && "hover:bg-red-300"} mb-2 flex items-center px-2 py-1 cursor-pointer`}
                       onClick={() => setBookAbbr(book.abbr)}
                     >
                       <h3 className="font-bold">
@@ -334,7 +375,7 @@ export default function SelectBibleVersesDialog({
                 setOpen(false);
               }}
               disabled={selectedVersesFrom === null}
-              className="bg-yellow-300 hover:bg-yellow-300 text-neutral-900 border-2"
+              className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} text-neutral-900 border-2`}
             >
               {lang === "en"
                 ? BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)?.engName

@@ -2,11 +2,12 @@ import { Card, CardAction, CardContent, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
 import moment from "moment";
 import { LanguageContext } from "./LanguageContextProvider";
-import { use, useState } from "react";
+import { Fragment, use, useState } from "react";
 import { PrayerWithStatus } from "@/convex/myFunctions";
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { BIBLE_BOOKS } from "@/lib/bible-data";
 
 export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
   const addPrayerClick = useAction(api.myFunctions.addPrayerClick);
@@ -14,7 +15,9 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
   const lang = context?.lang ?? "en";
   const [isLoading, setIsLoading] = useState(false);
   return (
-    <Card className="mb-12 w-full max-w-sm break-inside-avoid bg-yellow-300">
+    <Card
+      className={`mb-12 w-full max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""}`}
+    >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
         <div className="bg-white px-2 font-semibold">
@@ -27,13 +30,32 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
       <CardContent className="mb-4 text-neutral-800">
         {prayer.content}
       </CardContent>
+      {/* TODO add ESV */}
       {prayer.bibleVerseCUVS && (
-        <div className="border-black border-y-3 p-4 bg-yellow-200">
+        <div
+          className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""}`}
+        >
           <p className="italic font-semibold">
-            {lang === "en" ? prayer.bibleVerseESV : prayer.bibleVerseCUVS}
+            {lang === "en" ? (
+              <></>
+            ) : (
+              prayer.bibleVerseCUVS.split("<br>").map((line, i) => (
+                <Fragment key={i}>
+                  {line}
+                  <br />
+                </Fragment>
+              ))
+            )}
           </p>
           <p className="mt-2 italic font-semibold">
-            {lang === "en" ? prayer.bibleVerseESVRef : prayer.bibleVerseCUVSRef}
+            {lang === "en"
+              ? BIBLE_BOOKS.find(
+                  (book) => book.abbr === prayer.bibleVerseRef?.split(" ")[0],
+                )?.engName
+              : BIBLE_BOOKS.find(
+                  (book) => book.abbr === prayer.bibleVerseRef?.split(" ")[0],
+                )?.chiName}
+            {` ${prayer.bibleVerseRef?.split(" ")[1]}`}
           </p>
         </div>
       )}

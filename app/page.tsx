@@ -16,9 +16,9 @@ export default function Home() {
   return (
     <main className="p-8 flex flex-col gap-8">
       <section>
-        <h1 className="text-4xl font-bold">PKA Prayer Board</h1>
+        <h1 className="text-4xl font-bold">PKA Prayer Care</h1>
         <p className="mt-2">
-          Welcome to the PKA Prayer Board. Share your prayers and support others
+          Welcome to the PKA Prayer Care. Share your prayers and support others
           in their spiritual journey.
         </p>
       </section>

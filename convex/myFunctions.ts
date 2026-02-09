@@ -149,6 +149,12 @@ export const checkAndAddPrayer = action({
     username: v.string(),
     userId: v.string(),
     isPublic: v.boolean(),
+    color: v.union(
+      v.literal("white"),
+      v.literal("yellow"),
+      v.literal("cyan"),
+      v.literal("red"),
+    ),
   },
 
   handler: async (ctx, args): Promise<string> => {
@@ -200,7 +206,18 @@ export const checkAndAddPrayer = action({
           (v: { number: number }) => v.number === verses[0],
         );
         if (verseObj && verseObj.content && verseObj.content.length > 0) {
-          versesTextCUVS = verseObj.content[0];
+          if (typeof verseObj.content[0] === "string") {
+            versesTextCUVS = verseObj.content[0];
+          } else {
+            let bibleLine = "";
+            verseObj.content.map(
+              (line: { lineBreak?: boolean; poem?: string; text?: string }) => {
+                if (line.lineBreak) bibleLine += "<br>";
+                if (line.poem) bibleLine += line.text;
+              },
+            );
+            versesTextCUVS = bibleLine;
+          }
         }
       } else if (verses.length > 1) {
         versesTextCUVS = verses
@@ -208,12 +225,37 @@ export const checkAndAddPrayer = action({
             const verseObj = data.chapter.content.find(
               (v: { number: number }) => v.number === verseNumber,
             );
-            return verseObj && verseObj.content && verseObj.content.length > 0
-              ? `${verseNumber} ${verseObj.content[0]}`
-              : null;
+
+            if (verseObj && verseObj.content && verseObj.content.length > 0) {
+              if (typeof verseObj.content[0] === "string") {
+                return `${verseNumber} ${verseObj.content[0]}`;
+              } else {
+                return (
+                  `${verseNumber} ` +
+                  verseObj.content
+                    .map(
+                      (
+                        line: {
+                          lineBreak?: boolean;
+                          poem?: string;
+                          text?: string;
+                        },
+                        lineIndex: number,
+                      ) => {
+                        if (line.lineBreak && lineIndex !== 0) return "<br>";
+                        if (line.poem) return line.text;
+                        return null;
+                      },
+                    )
+                    .filter((text: string | null) => text !== null)
+                    .join(" ")
+                );
+              }
+            }
+            return null;
           })
           .filter((text: string | null) => text !== null)
-          .join(" ");
+          .join("<br>");
       }
 
       console.log(versesTextCUVS);
@@ -224,11 +266,12 @@ export const checkAndAddPrayer = action({
       title: args.title,
       bibleVerseCUVS: versesTextCUVS,
       bibleVerseESV: "",
-      bibleVerseCUVSRef: args.bibleVerses || "",
+      bibleVerseRef: args.bibleVerses || "",
       // bibleVerseESVRef: args.bibleVerseESVRef || "",
       username: args.username,
       expiresAt: args.expiresAt,
       createdBy: user._id,
+      color: args.color,
       isPublic: args.isPublic,
     });
     return prayerId;
@@ -253,11 +296,16 @@ export const addPrayer = internalMutation({
     title: v.string(),
     bibleVerseCUVS: v.optional(v.string()),
     bibleVerseESV: v.optional(v.string()),
-    bibleVerseCUVSRef: v.optional(v.string()),
-    bibleVerseESVRef: v.optional(v.string()),
+    bibleVerseRef: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
     username: v.optional(v.string()),
     createdBy: v.id("users"),
+    color: v.union(
+      v.literal("white"),
+      v.literal("yellow"),
+      v.literal("cyan"),
+      v.literal("red"),
+    ),
     isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
@@ -266,9 +314,9 @@ export const addPrayer = internalMutation({
       title: args.title,
       bibleVerseESV: args.bibleVerseESV || "",
       bibleVerseCUVS: args.bibleVerseCUVS || "",
-      bibleVerseCUVSRef: args.bibleVerseCUVSRef || "",
-      bibleVerseESVRef: args.bibleVerseESVRef || "",
+      bibleVerseRef: args.bibleVerseRef || "",
       prayedCount: 0,
+      color: args.color,
       createdBy: args.createdBy,
       createdAt: Date.now(),
       expiresAt: args.expiresAt,
