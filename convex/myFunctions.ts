@@ -6,7 +6,7 @@ import {
   internalMutation,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { parseBibleVerseCUVS } from "../lib/utils";
+import { formatBibleVerseESV, parseBibleVerseCUVS } from "../lib/utils";
 import { Doc, Id } from "./_generated/dataModel";
 
 // Write your Convex functions in any file inside this directory (`convex`).
@@ -93,9 +93,10 @@ export const getAllPrayers = query({
     let user: Doc<"users"> | null = null;
 
     if (args.userId !== "") {
-      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
-        userId: args.userId,
-      });
+      user = await ctx.db
+        .query("users")
+        .withIndex("byuserId", (q) => q.eq("userId", args.userId))
+        .first();
     }
 
     return await ctx.runQuery(
@@ -189,20 +190,39 @@ export const checkAndAddPrayer = action({
     }
 
     let versesTextCUVS = "";
+    let versesTextESV = "";
     if (args.bibleVerses !== undefined && args.bibleVerses !== "") {
       const parsedVerse = parseBibleVerseCUVS(args.bibleVerses || "");
       if (!parsedVerse) {
         throw new Error("Invalid bible verse format.");
       }
       const { book, chapter, verses } = parsedVerse;
-      const res = await fetch(
+      const resCUVS = await fetch(
         `https://bible.helloao.org/api/cmn_cu1/${book}/${chapter}.json`,
       );
 
-      const data = await res.json();
+      const resESV = await fetch(
+        `https://api.esv.org/v3/passage/text/?q=${book}+${chapter}:${verses.join("-")}&include-passage-references=false&include-first-verse-numbers=false&include-footnotes=false&include-footnote-body=false&include-headings=false&include-short-copyright=false`,
+        {
+          headers: {
+            Authorization: `Token ${process.env.ESV_API_KEY}`,
+          },
+        },
+      );
+      const dataESV = await resESV.json();
+      console.log(formatBibleVerseESV(dataESV.passages[0]));
+      versesTextESV = formatBibleVerseESV(dataESV.passages[0]);
+      // .map((passage: string, index: number) =>
+      //   dataESV.passages.length > 2
+      //     ? index + " " + passage.trim()
+      //     : passage.trim(),
+      // )
+      // .join("<br>");
+
+      const dataCUVS = await resCUVS.json();
 
       if (verses.length === 1) {
-        const verseObj = data.chapter.content.find(
+        const verseObj = dataCUVS.chapter.content.find(
           (v: { number: number }) => v.number === verses[0],
         );
         if (verseObj && verseObj.content && verseObj.content.length > 0) {
@@ -212,7 +232,7 @@ export const checkAndAddPrayer = action({
             let bibleLine = "";
             verseObj.content.map(
               (line: { lineBreak?: boolean; poem?: string; text?: string }) => {
-                if (line.lineBreak) bibleLine += "<br>";
+                if (line.lineBreak) bibleLine += "\n";
                 if (line.poem) bibleLine += line.text;
               },
             );
@@ -222,7 +242,7 @@ export const checkAndAddPrayer = action({
       } else if (verses.length > 1) {
         versesTextCUVS = verses
           .map((verseNumber) => {
-            const verseObj = data.chapter.content.find(
+            const verseObj = dataCUVS.chapter.content.find(
               (v: { number: number }) => v.number === verseNumber,
             );
 
@@ -242,7 +262,7 @@ export const checkAndAddPrayer = action({
                         },
                         lineIndex: number,
                       ) => {
-                        if (line.lineBreak && lineIndex !== 0) return "<br>";
+                        if (line.lineBreak && lineIndex !== 0) return "\n";
                         if (line.poem) return line.text;
                         return null;
                       },
@@ -255,19 +275,16 @@ export const checkAndAddPrayer = action({
             return null;
           })
           .filter((text: string | null) => text !== null)
-          .join("<br>");
+          .join("\n");
       }
-
-      console.log(versesTextCUVS);
     }
 
     const prayerId = await ctx.runMutation(internal.myFunctions.addPrayer, {
       content: args.content,
       title: args.title,
       bibleVerseCUVS: versesTextCUVS,
-      bibleVerseESV: "",
+      bibleVerseESV: versesTextESV,
       bibleVerseRef: args.bibleVerses || "",
-      // bibleVerseESVRef: args.bibleVerseESVRef || "",
       username: args.username,
       expiresAt: args.expiresAt,
       createdBy: user._id,

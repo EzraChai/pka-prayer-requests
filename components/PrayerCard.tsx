@@ -31,21 +31,24 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
         {prayer.content}
       </CardContent>
       {/* TODO add ESV */}
-      {prayer.bibleVerseCUVS && (
+      {prayer.bibleVerseCUVS && prayer.bibleVerseESV && (
         <div
-          className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""}`}
+          className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-yellow-100" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""}`}
         >
-          <p className="italic font-semibold">
-            {lang === "en" ? (
-              <></>
-            ) : (
-              prayer.bibleVerseCUVS.split("<br>").map((line, i) => (
-                <Fragment key={i}>
-                  {line}
-                  <br />
-                </Fragment>
-              ))
-            )}
+          <p className="italic font-semibold text-justify whitespace-pre-wrap">
+            {lang === "en"
+              ? prayer.bibleVerseESV.split("\n").map((line, i) => (
+                  <Fragment key={i}>
+                    {line}
+                    <br />
+                  </Fragment>
+                ))
+              : prayer.bibleVerseCUVS.split("\n").map((line, i) => (
+                  <Fragment key={i}>
+                    {line}
+                    <br />
+                  </Fragment>
+                ))}
           </p>
           <p className="mt-2 italic font-semibold">
             {lang === "en"
