@@ -11,6 +11,7 @@ import {
 } from "./ui/dialog";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
 import { ChevronLeft, ChevronRight, LoaderCircle, X } from "lucide-react";
+import { parseESVBibleText } from "@/lib/utils";
 
 const fetchBibleChapter = async (
   bookAbbr: string,
@@ -18,11 +19,17 @@ const fetchBibleChapter = async (
   lang: string,
 ) => {
   if (lang === "en") {
+    const res = await fetch(
+      `/api/esv?book=${
+        BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)?.engName
+      }&chapter=${chapter}`,
+    );
+    return parseESVBibleText((await res.json()).passages[0]);
   } else {
     const res = await fetch(
       `https://bible.helloao.org/api/cmn_cu1/${bookAbbr}/${chapter}.json`,
     );
-    return res.json();
+    return (await res.json()).chapter.content;
   }
 };
 
@@ -70,7 +77,7 @@ export default function SelectBibleVersesDialog({
     if (chapter && bookAbbr) {
       fetchBibleChapter(bookAbbr, chapter, lang).then((data) => {
         console.log(data);
-        setVerses(data.chapter.content);
+        setVerses(data);
       });
     }
   }, [chapter]);

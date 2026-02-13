@@ -8,6 +8,7 @@ import {
 import { internal } from "./_generated/api";
 import { formatBibleVerseESV, parseBibleVerseCUVS } from "../lib/utils";
 import { Doc, Id } from "./_generated/dataModel";
+import { BIBLE_BOOKS } from "../lib/bible-data";
 
 // Write your Convex functions in any file inside this directory (`convex`).
 // See https://docs.convex.dev/functions for more.
@@ -202,7 +203,9 @@ export const checkAndAddPrayer = action({
       );
 
       const resESV = await fetch(
-        `https://api.esv.org/v3/passage/text/?q=${book}+${chapter}:${verses.join("-")}&include-passage-references=false&include-first-verse-numbers=false&include-footnotes=false&include-footnote-body=false&include-headings=false&include-short-copyright=false`,
+        `https://api.esv.org/v3/passage/text/?q=${
+          BIBLE_BOOKS.find((b) => b.abbr === book)?.engName
+        }+${chapter}:${verses.join("-")}&include-passage-references=false&include-first-verse-numbers=false&include-footnotes=false&include-footnote-body=false&include-headings=false&include-short-copyright=false`,
         {
           headers: {
             Authorization: `Token ${process.env.ESV_API_KEY}`,
@@ -212,12 +215,6 @@ export const checkAndAddPrayer = action({
       const dataESV = await resESV.json();
       console.log(formatBibleVerseESV(dataESV.passages[0]));
       versesTextESV = formatBibleVerseESV(dataESV.passages[0]);
-      // .map((passage: string, index: number) =>
-      //   dataESV.passages.length > 2
-      //     ? index + " " + passage.trim()
-      //     : passage.trim(),
-      // )
-      // .join("<br>");
 
       const dataCUVS = await resCUVS.json();
 

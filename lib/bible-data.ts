@@ -137,7 +137,7 @@ export const BIBLE_BOOKS: BibleBook[] = [
     totalChapters: 42,
   },
   {
-    engName: "Psalms",
+    engName: "Psalm",
     chiName: "诗篇",
     abbr: "PSA",
     testament: "OT",
