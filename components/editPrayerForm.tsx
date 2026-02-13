@@ -111,7 +111,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
               ${color === "green" && "bg-lime-200"}`}
           >
             <DialogHeader>
-              <DialogTitle>New Prayer Request</DialogTitle>
+              <DialogTitle>Edit Prayer Request</DialogTitle>
             </DialogHeader>
             <form
               id="prayer-request-form"
