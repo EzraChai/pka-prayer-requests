@@ -175,6 +175,7 @@ export const getAllPrayersAndPrayerClicked = internalQuery({
 export const checkAndAddPrayer = action({
   args: {
     id: v.optional(v.id("prayers")),
+    prayedCount: v.optional(v.number()),
     content: v.string(),
     title: v.string(),
     bibleVerses: v.string(),
@@ -310,6 +311,7 @@ export const checkAndAddPrayer = action({
 
     await ctx.runMutation(internal.myFunctions.addPrayer, {
       id: args.id,
+      prayedCount: args.prayedCount,
       content: args.content,
       title: args.title,
       bibleVerseCUVS: versesTextCUVS,
@@ -339,6 +341,7 @@ export const getUserByUserId = internalQuery({
 export const addPrayer = internalMutation({
   args: {
     id: v.optional(v.id("prayers")),
+    prayedCount: v.optional(v.number()),
     content: v.string(),
     title: v.string(),
     bibleVerseCUVS: v.optional(v.string()),
@@ -357,14 +360,14 @@ export const addPrayer = internalMutation({
     isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
-    if (args.id) {
+    if (args.id && args.prayedCount) {
       await ctx.db.patch(args.id, {
         content: args.content,
         title: args.title,
         bibleVerseESV: args.bibleVerseESV || "",
         bibleVerseCUVS: args.bibleVerseCUVS || "",
         bibleVerseRef: args.bibleVerseRef || "",
-        prayedCount: 0,
+        prayedCount: args.prayedCount || 0,
         color: args.color,
         createdBy: args.createdBy,
         createdAt: Date.now(),

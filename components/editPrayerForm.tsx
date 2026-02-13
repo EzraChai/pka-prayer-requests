@@ -77,6 +77,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
           username: value.username ?? "",
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
+          prayedCount: prayer.prayedCount,
         });
       } catch (error) {
         console.error("Error submitting prayer request:", error);
