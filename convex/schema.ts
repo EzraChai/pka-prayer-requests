@@ -24,6 +24,7 @@ export default defineSchema({
       v.literal("yellow"),
       v.literal("cyan"),
       v.literal("red"),
+      v.literal("green"),
     ),
     prayedCount: v.number(),
     isPublic: v.boolean(),

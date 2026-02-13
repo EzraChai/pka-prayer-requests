@@ -20,7 +20,8 @@ export default function SelectExpiresAt({
             ${color === "yellow" && "bg-yellow-200 hover:bg-yellow-300"} 
             ${color === "white" && "bg-white hover:bg-gray-100"} 
             ${color === "cyan" && "bg-cyan-200 hover:bg-cyan-300"} 
-            ${color === "red" && "bg-red-200 hover:bg-red-300"}`}
+            ${color === "red" && "bg-red-200 hover:bg-red-300"}
+            ${color === "green" && "bg-lime-200 hover:bg-lime-300"}`}
         >
           {value
             ? new Date(value).toLocaleDateString()

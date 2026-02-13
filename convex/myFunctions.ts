@@ -4,6 +4,7 @@ import {
   action,
   internalQuery,
   internalMutation,
+  mutation,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { formatBibleVerseESV, parseBibleVerseCUVS } from "../lib/utils";
@@ -109,6 +110,35 @@ export const getAllPrayers = query({
   },
 });
 
+export const getAllPrayersById = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args): Promise<Doc<"prayers">[]> => {
+    const user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+      userId: args.userId,
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return await ctx.db
+      .query("prayers")
+      .withIndex("by_createdBy", (q) => q.eq("createdBy", user._id))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const deletePrayerById = mutation({
+  args: {
+    prayerId: v.id("prayers"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.prayerId);
+  },
+});
+
 export const getAllPrayersAndPrayerClicked = internalQuery({
   args: {
     userId: v.optional(v.id("users")),
@@ -144,6 +174,7 @@ export const getAllPrayersAndPrayerClicked = internalQuery({
 
 export const checkAndAddPrayer = action({
   args: {
+    id: v.optional(v.id("prayers")),
     content: v.string(),
     title: v.string(),
     bibleVerses: v.string(),
@@ -156,10 +187,11 @@ export const checkAndAddPrayer = action({
       v.literal("yellow"),
       v.literal("cyan"),
       v.literal("red"),
+      v.literal("green"),
     ),
   },
 
-  handler: async (ctx, args): Promise<string> => {
+  handler: async (ctx, args): Promise<void> => {
     const isProfanity = await checkProfanity(
       args.title.concat(" ", args.content),
     );
@@ -276,7 +308,8 @@ export const checkAndAddPrayer = action({
       }
     }
 
-    const prayerId = await ctx.runMutation(internal.myFunctions.addPrayer, {
+    await ctx.runMutation(internal.myFunctions.addPrayer, {
+      id: args.id,
       content: args.content,
       title: args.title,
       bibleVerseCUVS: versesTextCUVS,
@@ -288,7 +321,6 @@ export const checkAndAddPrayer = action({
       color: args.color,
       isPublic: args.isPublic,
     });
-    return prayerId;
   },
 });
 
@@ -306,6 +338,7 @@ export const getUserByUserId = internalQuery({
 
 export const addPrayer = internalMutation({
   args: {
+    id: v.optional(v.id("prayers")),
     content: v.string(),
     title: v.string(),
     bibleVerseCUVS: v.optional(v.string()),
@@ -319,25 +352,44 @@ export const addPrayer = internalMutation({
       v.literal("yellow"),
       v.literal("cyan"),
       v.literal("red"),
+      v.literal("green"),
     ),
     isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const prayerId = await ctx.db.insert("prayers", {
-      content: args.content,
-      title: args.title,
-      bibleVerseESV: args.bibleVerseESV || "",
-      bibleVerseCUVS: args.bibleVerseCUVS || "",
-      bibleVerseRef: args.bibleVerseRef || "",
-      prayedCount: 0,
-      color: args.color,
-      createdBy: args.createdBy,
-      createdAt: Date.now(),
-      expiresAt: args.expiresAt,
-      username: args.username,
-      isPublic: args.isPublic,
-    });
-    return prayerId;
+    if (args.id) {
+      await ctx.db.patch(args.id, {
+        content: args.content,
+        title: args.title,
+        bibleVerseESV: args.bibleVerseESV || "",
+        bibleVerseCUVS: args.bibleVerseCUVS || "",
+        bibleVerseRef: args.bibleVerseRef || "",
+        prayedCount: 0,
+        color: args.color,
+        createdBy: args.createdBy,
+        createdAt: Date.now(),
+        expiresAt: args.expiresAt,
+        username: args.username,
+        isPublic: args.isPublic,
+      });
+      return;
+    } else {
+      await ctx.db.insert("prayers", {
+        content: args.content,
+        title: args.title,
+        bibleVerseESV: args.bibleVerseESV || "",
+        bibleVerseCUVS: args.bibleVerseCUVS || "",
+        bibleVerseRef: args.bibleVerseRef || "",
+        prayedCount: 0,
+        color: args.color,
+        createdBy: args.createdBy,
+        createdAt: Date.now(),
+        expiresAt: args.expiresAt,
+        username: args.username,
+        isPublic: args.isPublic,
+      });
+      return;
+    }
   },
 });
 

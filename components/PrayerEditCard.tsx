@@ -2,26 +2,66 @@ import { Card, CardAction, CardContent, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
 import moment from "moment";
 import { LanguageContext } from "./LanguageContextProvider";
-import { Fragment, use, useState } from "react";
-import { PrayerWithStatus } from "@/convex/myFunctions";
-import { api } from "@/convex/_generated/api";
-import { useAction } from "convex/react";
-import { Loader2 } from "lucide-react";
+import { Fragment, use } from "react";
+import { useMutation } from "convex/react";
+import { Edit, Trash2 } from "lucide-react";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
+import { Doc } from "@/convex/_generated/dataModel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import { api } from "@/convex/_generated/api";
+import { EditPrayerForm } from "./editPrayerForm";
 
-export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
-  const addPrayerClick = useAction(api.myFunctions.addPrayerClick);
+export default function PrayerEditCard({ prayer }: { prayer: Doc<"prayers"> }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
-  const [isLoading, setIsLoading] = useState(false);
+  const deletePrayer = useMutation(api.myFunctions.deletePrayerById);
   return (
     <Card
       className={`mb-12 w-full max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
-        <div className="bg-white px-2 font-semibold">
-          {prayer.prayedCount} AMEN
+        <div className="flex gap-2">
+          <EditPrayerForm prayer={prayer} />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="bg-white hover:bg-red-500 text-black border-3 w-8 h-8">
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your prayer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    await deletePrayer({
+                      prayerId: prayer._id,
+                    });
+                  }}
+                  className="bg-red-500 hover:bg-red-500 text-white font-black border-2"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
       <CardHeader className="mt-2 text-2xl font-semibold">
@@ -30,6 +70,7 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
       <CardContent className="mb-4 text-neutral-800">
         {prayer.content}
       </CardContent>
+      {/* TODO add ESV */}
       {prayer.bibleVerseCUVS && prayer.bibleVerseESV && (
         <div
           className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-neutral-100" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""} ${prayer.color === "green" ? "bg-lime-200" : ""}`}
@@ -62,62 +103,13 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
         </div>
       )}
       <CardAction className="px-4 pb-2 flex w-full items-center justify-between">
-        <Button
-          disabled={prayer.prayed}
-          className="relative w-24 bg-white hover:bg-white text-neutral-800 border-2"
-          onClick={async (e) => {
-            setIsLoading(true);
-            let userId = localStorage.getItem("userId");
-            if (!userId) {
-              userId = crypto.randomUUID();
-              localStorage.setItem("userId", userId);
-            }
-
-            spawnPrayParticles(e.clientX, e.clientY);
-
-            await addPrayerClick({
-              prayerId: prayer._id,
-              userId: userId,
-            });
-            setIsLoading(false);
-          }}
-        >
-          {isLoading ? (
-            <Loader2 className=" animate-spin" />
-          ) : prayer.prayed ? (
-            "✅ Prayed"
-          ) : (
-            "🙏 Pray"
-          )}
-        </Button>
-
+        <div className="bg-white px-2 font-semibold">
+          {prayer.prayedCount} Prayed
+        </div>
         <p className=" text-xs text-neutral-600">
           {moment(prayer.createdAt).fromNow()}
         </p>
       </CardAction>
     </Card>
   );
-}
-
-function spawnPrayParticles(x: number, y: number) {
-  const icons = ["🙏", "​✝️"];
-
-  for (let i = 0; i < 8; i++) {
-    const particle = document.createElement("span");
-
-    particle.textContent = icons[Math.floor(Math.random() * icons.length)];
-
-    particle.className = "pray-particle";
-
-    particle.style.left = `${x}px`;
-    particle.style.top = `${y}px`;
-    particle.style.transform = "translate(-50%, -50%)";
-
-    particle.style.setProperty("--dx", `${(Math.random() - 0.5) * 120}px`);
-    particle.style.setProperty("--dy", `${(Math.random() - 0.5) * 120}px`);
-
-    document.body.appendChild(particle);
-
-    setTimeout(() => particle.remove(), 600);
-  }
 }

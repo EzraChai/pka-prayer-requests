@@ -28,7 +28,8 @@ import SelectExpiresAt from "./selectExpiresAt";
 import { Switch } from "./ui/switch";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { Check, LoaderCircle } from "lucide-react";
+import { Check, Edit, LoaderCircle } from "lucide-react";
+import { Doc } from "@/convex/_generated/dataModel";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -39,24 +40,24 @@ const formSchema = z.object({
   username: z.string().default("").nullable(),
   expiresAt: z.date().nullable(),
   isPublic: z.boolean(),
-  color: z.enum(["white", "yellow", "cyan", "red"]).default("white"),
+  color: z.enum(["white", "yellow", "cyan", "red", "green"]).default("white"),
 });
 
-export function AddNewPrayerForm() {
-  const addPrayerRequest = useAction(api.myFunctions.checkAndAddPrayer);
+export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
+  const editPrayerRequest = useAction(api.myFunctions.checkAndAddPrayer);
   const context = use(LanguageContext);
   const [open, setOpen] = useState(false);
   const lang = context?.lang ?? "en";
 
   const form = useForm({
     defaultValues: {
-      title: "",
-      content: "",
-      bibleVerses: "",
-      username: "",
-      expiresAt: null as Date | null,
-      isPublic: true,
-      color: "white",
+      title: prayer.title,
+      content: prayer.content,
+      bibleVerses: prayer.bibleVerseRef || "",
+      username: prayer.username,
+      expiresAt: prayer.expiresAt ? new Date(prayer.expiresAt) : null,
+      isPublic: prayer.isPublic,
+      color: prayer.color,
     },
     validators: {
       onSubmit: formSchema,
@@ -69,11 +70,13 @@ export function AddNewPrayerForm() {
           userId = crypto.randomUUID();
           localStorage.setItem("userId", userId);
         }
-        await addPrayerRequest({
+        await editPrayerRequest({
           ...value,
+          id: prayer._id,
           userId: userId ?? "",
+          username: value.username ?? "",
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
-          color: value.color as "white" | "yellow" | "cyan" | "red",
+          color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
         });
       } catch (error) {
         console.error("Error submitting prayer request:", error);
@@ -92,18 +95,19 @@ export function AddNewPrayerForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className=" text-3xl bg-neutral-800 border-3 font-black p-8">
-          + Prayer
+        <Button className="bg-white text-black hover:bg-gray-100 border-3 w-8 h-8">
+          <Edit className="w-4 h-4" />
         </Button>
       </DialogTrigger>
       <form.Subscribe selector={(state) => state.values.color}>
         {(color) => (
           <DialogContent
-            className={`w-2xl ${
-              color === "yellow" && "bg-yellow-200"
-            } ${color === "white" && "bg-white"} ${
-              color === "cyan" && "bg-cyan-200"
-            } ${color === "red" && "bg-red-200"}`}
+            className={`w-2xl 
+              ${color === "yellow" && "bg-yellow-200"}
+              ${color === "white" && "bg-white"}
+              ${color === "cyan" && "bg-cyan-200"}
+              ${color === "red" && "bg-red-200"}
+              ${color === "green" && "bg-lime-200"}`}
           >
             <DialogHeader>
               <DialogTitle>New Prayer Request</DialogTitle>
@@ -250,17 +254,8 @@ export function AddNewPrayerForm() {
                 <form.Field name="color">
                   {(field) => (
                     <Field>
-                      <FieldLabel>Prayer Color</FieldLabel>
+                      <FieldLabel>Color</FieldLabel>
                       <div className="flex gap-2 items-center">
-                        <button
-                          type="button"
-                          onClick={() => field.handleChange("white")}
-                          className="bg-white w-4 h-4 border-neutral-800 border"
-                        >
-                          {field.state.value === "white" && (
-                            <Check size={"sm"} />
-                          )}
-                        </button>
                         <button
                           type="button"
                           onClick={() => field.handleChange("yellow")}
@@ -270,6 +265,16 @@ export function AddNewPrayerForm() {
                             <Check size={"sm"} />
                           )}
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => field.handleChange("white")}
+                          className="bg-white w-4 h-4 border-neutral-800 border"
+                        >
+                          {field.state.value === "white" && (
+                            <Check size={"sm"} />
+                          )}
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => field.handleChange("red")}
@@ -283,6 +288,15 @@ export function AddNewPrayerForm() {
                           className="bg-cyan-300 w-4 h-4 border-neutral-800 border"
                         >
                           {field.state.value === "cyan" && (
+                            <Check size={"sm"} />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => field.handleChange("green")}
+                          className="bg-lime-300 w-4 h-4 border-neutral-800 border"
+                        >
+                          {field.state.value === "green" && (
                             <Check size={"sm"} />
                           )}
                         </button>
@@ -328,7 +342,7 @@ export function AddNewPrayerForm() {
               <Button
                 disabled={form.state.isSubmitting}
                 type="submit"
-                className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} text-neutral-800 border-2`}
+                className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} ${color === "green" && "bg-lime-300 hover:bg-lime-300"} text-neutral-800 border-2`}
                 form="prayer-request-form"
               >
                 {form.state.isSubmitting ? (

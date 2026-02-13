@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import PrayerCard from "@/components/PrayerCard";
-import { AddNewPrayerForm } from "../components/addForm";
+import { AddNewPrayerForm } from "../components/addPrayerForm";
 import { LanguageContext } from "@/components/LanguageContextProvider";
 import { use } from "react";
 import Link from "next/link";
@@ -20,7 +20,7 @@ export default function Home() {
   });
 
   return (
-    <main className="p-8 flex flex-col ">
+    <main className="p-12 flex flex-col ">
       <section>
         <h1 className="text-4xl font-bold">PKA Prayer Care</h1>
         <p className="mt-2">

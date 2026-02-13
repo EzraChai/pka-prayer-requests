@@ -119,7 +119,7 @@ export default function SelectBibleVersesDialog({
                 </h3>
               </div>
             </div>
-            <div className="h-96 overflow-scroll ">
+            <div className="h-96 w-full overflow-x-hidden overflow-y-scroll ">
               {verses.length ? (
                 verses.map((verseObj, index) => {
                   if (verseObj.type === "heading") {
@@ -198,7 +198,7 @@ export default function SelectBibleVersesDialog({
                             setSelectedVersesTo(null);
                           }
                         }}
-                        className={`w-full py-3 text-left flex gap-2 hover:bg-neutral-200 px-2 ${
+                        className={`w-full py-3 text-left flex gap-2  ${color === "yellow" && "hover:bg-yellow-100"} ${color === "white" && "hover:bg-neutral-100"} ${color === "cyan" && "hover:bg-cyan-100"} ${color === "red" && "hover:bg-red-100"} ${color === "green" && "hover:bg-lime-100"} px-2 ${
                           selectedVersesFrom === verseObj.number ||
                           selectedVersesTo === verseObj.number ||
                           (verseObj.number &&
@@ -206,8 +206,9 @@ export default function SelectBibleVersesDialog({
                             selectedVersesFrom < verseObj.number &&
                             selectedVersesTo &&
                             verseObj.number < selectedVersesTo)
-                            ? `${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-200"}
+                            ? `${color === "yellow" && "bg-yellow-300 hover:bg-yellow-200"}
                             ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-200"}
+                            ${color === "green" && "bg-lime-300 hover:bg-lime-200"}
                             ${color === "red" && "bg-red-300 hover:bg-red-200"}`
                             : ""
                         }`}
@@ -265,7 +266,7 @@ export default function SelectBibleVersesDialog({
               {BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)?.totalChapters}{" "}
               {lang === "en" ? "Chapters available." : "章"}
             </div>
-            <div className="grid grid-cols-10 gap-2 max-h-96 overflow-scroll">
+            <div className="grid grid-cols-10 gap-2 max-h-96 w-full overflow-y-scroll">
               {Array.from(
                 {
                   length:
@@ -331,7 +332,7 @@ export default function SelectBibleVersesDialog({
               )}
             </div>
 
-            <div className="h-96 overflow-scroll">
+            <div className="h-96 overflow-y-scroll w-full">
               <div className="grid grid-cols-2 ">
                 {BIBLE_BOOKS.filter((book) => {
                   if (testaments === "All") return true;
@@ -382,7 +383,7 @@ export default function SelectBibleVersesDialog({
                 setOpen(false);
               }}
               disabled={selectedVersesFrom === null}
-              className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} text-neutral-900 border-2`}
+              className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} ${color === "green" && "bg-lime-300 hover:bg-lime-200"} text-neutral-900 border-2`}
             >
               {lang === "en"
                 ? BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)?.engName

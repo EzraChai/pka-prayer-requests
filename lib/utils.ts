@@ -25,26 +25,41 @@ export function parseBibleVerseCUVS(input: string) {
 }
 
 export function formatBibleVerseESV(text: string) {
-  // Remove header line if exists
-  const withoutHeader = text.replace(/^.*?\n\s*\n\s*/, "");
+  // 1️⃣ Find the first [x] marker and slice from it
+  const firstVerseIndex = text.search(/\[\d+\]/);
+  const sliced = firstVerseIndex !== -1 ? text.slice(firstVerseIndex) : text;
 
-  // Trim + remove ending newlines
-  const cleaned = withoutHeader.trim().replace(/\n+$/, "");
+  // 2️⃣ Split lines, trim spaces, remove empty lines
+  const lines = sliced
+    .split(/\r?\n/)
+    .map((line) => line.trim()) // remove leading/trailing spaces
+    .filter((line) => line.length > 0); // remove empty lines
 
-  // Find all [
-  const matches = cleaned.match(/\[/g) || [];
+  // 3️⃣ Join lines into a single string
+  let cleaned = lines.join("\n");
 
-  // If only one [, remove [number]
+  // 4️⃣ Detect all [x] markers
+  const matches = cleaned.match(/\[\d+\]/g) || [];
+
+  // 5️⃣ If only one [x] → remove it
   if (matches.length === 1) {
-    return cleaned.replace(/\[\d+\]\s*/, "");
+    cleaned = cleaned.replace(/^\[\d+\]\s*/, "");
+    return cleaned;
   }
 
-  // If more than one [, add <br/> before 2nd onwards
-  let count = 0;
-  return cleaned.replace(/\[\d+\]/g, (match) => {
-    count++;
-    return count === 1 ? match : `\n${match}`;
-  });
+  // 6️⃣ If multiple → ensure each [x] starts on its own line
+  if (matches.length > 1) {
+    let first = true;
+    cleaned = cleaned.replace(/\[\d+\]/g, (match) => {
+      if (first) {
+        first = false;
+        return match;
+      }
+      return `\n${match}`;
+    });
+  }
+
+  return cleaned;
 }
 
 type VerseType =
