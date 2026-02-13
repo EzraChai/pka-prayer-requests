@@ -40,11 +40,13 @@ export default defineSchema({
     userId: v.id("users"),
   }).index("by_prayer_user", ["userId", "prayerId"]),
 
-  linkTokens: defineTable({
+  link_tokens: defineTable({
     token: v.string(),
     userId: v.id("users"),
     expiresAt: v.number(),
     used: v.boolean(),
     createdAt: v.number(),
-  }).index("by_token", ["token"]),
+  })
+    .index("by_token", ["token", "used", "expiresAt"])
+    .index("by_user", ["userId", "expiresAt"]),
 });

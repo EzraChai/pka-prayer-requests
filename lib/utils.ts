@@ -148,58 +148,26 @@ export function parseESVBibleText(raw: string): Verse[] {
   return result;
 }
 
-// export function parseESVBibleText(raw: string): Verse[] {
-//   console.log(raw);
-//   const cleaned = raw.trim();
+export async function generateUrlSafeToken(userId: string) {
+  // 1. Create the raw data string (added random for extra security)
+  const rawData = `${userId}-${Date.now()}-${Math.random()}`;
 
-//   const verses: Verse[] = [];
+  // 2. Encode to bytes and digest
+  const msgBuffer = new TextEncoder().encode(rawData);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
 
-//   // 👉 find first verse number
-//   const firstVerseMatch = cleaned.match(/\[\d+\]/);
+  // 3. Convert ArrayBuffer to Base64 String
+  const hashArray = new Uint8Array(hashBuffer);
+  let binaryString = "";
+  for (let i = 0; i < hashArray.byteLength; i++) {
+    binaryString += String.fromCharCode(hashArray[i]);
+  }
 
-//   if (!firstVerseMatch) return [];
-
-//   const heading = cleaned.slice(0, firstVerseMatch.index).trim();
-
-//   if (heading) {
-//     verses.push({
-//       type: "heading",
-//       content: [heading],
-//     });
-//   }
-
-//   // 👉 split by verse markers while keeping numbers
-//   const parts = cleaned.split(/\[(\d+)\]/);
-
-//   // parts = ["heading...", "1", " verse text...", "2", " verse text..."]
-
-//   for (let i = 1; i < parts.length; i += 2) {
-//     const number = Number(parts[i]);
-//     const textBlock = parts[i + 1]?.trim();
-
-//     if (!textBlock) continue;
-
-//     // Split by double line breaks into content blocks
-//     const contentPieces = textBlock
-//       .split(/\n\n+/)
-//       .flatMap((chunk, index, arr) => {
-//         const items: Verse["content"] = [chunk.replace(/\s+/g, " ").trim()];
-
-//         if (index !== arr.length - 1) {
-//           items.push({ lineBreak: true });
-//         }
-
-//         return items;
-//       });
-
-//     verses.push({
-//       type: "verse",
-//       number,
-//       content: contentPieces,
-//     });
-//   }
-
-//   return verses;
-// }
+  // 4. Make it URL-safe (replace +, /, and remove padding =)
+  return btoa(binaryString)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
 
 parseBibleVerseCUVS("1John 3:16-18");

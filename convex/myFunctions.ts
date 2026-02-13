@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import {
   query,
   action,
@@ -7,7 +7,11 @@ import {
   mutation,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { formatBibleVerseESV, parseBibleVerseCUVS } from "../lib/utils";
+import {
+  formatBibleVerseESV,
+  generateUrlSafeToken,
+  parseBibleVerseCUVS,
+} from "../lib/utils";
 import { Doc, Id } from "./_generated/dataModel";
 import { BIBLE_BOOKS } from "../lib/bible-data";
 
@@ -61,6 +65,157 @@ export const addPrayerClick = action({
     await ctx.runMutation(internal.myFunctions.clickedPrayer, {
       prayerId: args.prayerId,
       userId: user._id,
+    });
+  },
+});
+
+export const generateToken = action({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args): Promise<string> => {
+    // Generate a unique token for the user
+    let user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+      userId: args.userId,
+    });
+    if (user) {
+      const link_tokens = await ctx.runQuery(
+        internal.myFunctions.getTokensByUserId,
+        {
+          userId: user._id,
+        },
+      );
+      console.log(link_tokens);
+
+      if (link_tokens.length > 0) {
+        return link_tokens[0].token;
+      }
+    } else {
+      await ctx.runMutation(internal.myFunctions.addUser, {
+        userId: args.userId,
+      });
+      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+        userId: args.userId,
+      });
+    }
+    if (!user) {
+      throw new Error("Failed to create or retrieve user.");
+    }
+
+    const token = await generateUrlSafeToken(user._id);
+    await ctx.runMutation(internal.myFunctions.insertTokens, {
+      userId: user._id,
+      token: token,
+    });
+    return token;
+  },
+});
+
+export const verifyToken = action({
+  args: {
+    userId: v.string(),
+    token: v.string(),
+  },
+  handler: async (ctx, args): Promise<string> => {
+    const token = await ctx.runQuery(internal.myFunctions.getTokensByToken, {
+      token: args.token,
+    });
+    if (!token) {
+      throw new ConvexError({
+        message: "Invalid token",
+        code: "INVALID_TOKEN",
+      });
+    }
+
+    const user = await ctx.runQuery(internal.myFunctions.getUserById, {
+      id: token.userId,
+    });
+    if (!user) {
+      throw new ConvexError({
+        message: "User not found for token",
+        code: "USER_NOT_FOUND",
+      });
+    }
+
+    if (user.userId === args.userId) {
+      throw new ConvexError({
+        message: "Cannot link with the same user",
+        code: "SAME_USER_LINK",
+      });
+    }
+
+    await ctx.runMutation(internal.myFunctions.setTokenUsed, {
+      id: token._id,
+    });
+
+    return user.userId;
+  },
+});
+
+export const setTokenUsed = internalMutation({
+  args: {
+    id: v.id("link_tokens"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
+      used: true,
+    });
+  },
+});
+
+export const getUserById = internalQuery({
+  args: {
+    id: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  },
+});
+
+export const getTokensByToken = internalQuery({
+  args: {
+    token: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("link_tokens")
+      .withIndex("by_token", (q) =>
+        q.eq("token", args.token).eq("used", false).gt("expiresAt", Date.now()),
+      )
+      .first();
+  },
+});
+
+export const getTokensByUserId = internalQuery({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("link_tokens")
+      .withIndex("by_user", (q) =>
+        q.eq("userId", args.userId).gt("expiresAt", Date.now()),
+      )
+      .collect();
+  },
+});
+
+export const insertTokens = internalMutation({
+  args: {
+    userId: v.id("users"),
+    token: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("link_tokens", {
+      userId: args.userId,
+      token: args.token,
+      expiresAt: Date.now() + 10 * 60 * 1000, // Token valid for 10 minutes
+      used: false,
+      createdAt: Date.now(),
     });
   },
 });
@@ -360,7 +515,7 @@ export const addPrayer = internalMutation({
     isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
-    if (args.id && args.prayedCount) {
+    if (args.id) {
       await ctx.db.patch(args.id, {
         content: args.content,
         title: args.title,

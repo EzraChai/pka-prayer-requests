@@ -1,4 +1,5 @@
 import { AddNewPrayerForm } from "@/components/addPrayerForm";
+import GenerateLinkButton from "@/components/GenerateLinkButton";
 import MyPrayers from "@/components/MyPrayers";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,23 +18,22 @@ export default function MyPrayersPage() {
             <p className="text-lg">
               Your spiritual journey, loud and proud. No login needed. Use your{" "}
               <span className="font-bold border-2 border-black bg-white px-2">
-                Unique Edit Link
+                Unique Link
               </span>{" "}
-              to access these on any other devices. <br /> Press the Copy Link
-              button and paste it in your other devices to access your prayers.
+              to access these on any other devices. <br /> Copy and paste the
+              link onto a new device to get started, each device requires its
+              own unique link.
             </p>
           </div>
           <div className="flex flex-col gap-6">
             <AddNewPrayerForm />
-            <Button className="bg-indigo-600 border-3 text-3xl font-black p-8">
-              Copy Link
-            </Button>
+            <GenerateLinkButton />
           </div>
         </div>
       </Card>
       <section className="px-12">
         <h2 className="text-2xl font-bold">My Prayers</h2>
-        <p className="text-lg">Here you can find all your saved prayers.</p>
+        <p className="text-lg">Here you can find all your written prayers.</p>
         <MyPrayers />
       </section>
     </div>

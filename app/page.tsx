@@ -20,7 +20,7 @@ export default function Home() {
   });
 
   return (
-    <main className="p-12 flex flex-col ">
+    <main className="p-12 flex flex-col">
       <section>
         <h1 className="text-4xl font-bold">PKA Prayer Care</h1>
         <p className="mt-2">

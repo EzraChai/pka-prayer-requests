@@ -14,11 +14,15 @@ export default function MyPrayers() {
   if (typeof prayers == "undefined") {
     return <div className="">Loading</div>;
   } else {
-    return (
-      <div className=" columns-1 md:columns-2 lg:columns-3 xl:columns-4 p-4 gap-4">
+    return prayers.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-4">
         {prayers.map((prayer) => (
           <PrayerEditCard prayer={prayer} key={prayer._id} />
         ))}
+      </div>
+    ) : (
+      <div className="mt-12 text-center py-4">
+        No prayers found. Add your prayer now!
       </div>
     );
   }
