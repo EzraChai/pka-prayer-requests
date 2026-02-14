@@ -35,11 +35,11 @@ const formSchema = z.object({
   content: z
     .string()
     .min(5, "Prayer content must be at least 5 characters long"),
-  bibleVerses: z.string().default("").nullable(),
-  username: z.string().default("").nullable(),
+  bibleVerses: z.string(),
+  username: z.string(),
   expiresAt: z.date().nullable(),
   isPublic: z.boolean(),
-  color: z.enum(["white", "yellow", "cyan", "red", "green"]).default("white"),
+  color: z.enum(["white", "yellow", "cyan", "red", "green"]),
 });
 
 export function AddNewPrayerForm() {

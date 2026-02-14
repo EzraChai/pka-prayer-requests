@@ -18,7 +18,6 @@ export default function LinkDevicePage() {
   const verifyToken = useAction(api.myFunctions.verifyToken);
 
   useEffect(() => {
-    console.log(token);
     if (!token) {
       router.replace("/");
       return;

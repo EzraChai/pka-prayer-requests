@@ -85,7 +85,6 @@ export const generateToken = action({
           userId: user._id,
         },
       );
-      console.log(link_tokens);
 
       if (link_tokens.length > 0) {
         return link_tokens[0].token;
@@ -401,7 +400,6 @@ export const checkAndAddPrayer = action({
         },
       );
       const dataESV = await resESV.json();
-      console.log(formatBibleVerseESV(dataESV.passages[0]));
       versesTextESV = formatBibleVerseESV(dataESV.passages[0]);
 
       const dataCUVS = await resCUVS.json();

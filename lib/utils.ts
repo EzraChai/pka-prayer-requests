@@ -97,7 +97,6 @@ function toContent(text: string): Verse["content"] {
 }
 
 export function parseESVBibleText(raw: string): Verse[] {
-  console.log(raw);
   const text = raw.trim();
 
   // split but keep numbers

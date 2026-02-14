@@ -76,7 +76,6 @@ export default function SelectBibleVersesDialog({
   useEffect(() => {
     if (chapter && bookAbbr) {
       fetchBibleChapter(bookAbbr, chapter, lang).then((data) => {
-        console.log(data);
         setVerses(data);
       });
     }
