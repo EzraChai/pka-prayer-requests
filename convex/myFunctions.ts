@@ -571,8 +571,9 @@ export const sendToTelegram = action({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          chat_id: "@pkaprayercare",
+          chat_id: "-1003777112746",
           text: args.message,
+          parse_mode: "MarkdownV2",
         }),
       },
     );
