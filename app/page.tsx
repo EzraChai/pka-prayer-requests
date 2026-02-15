@@ -30,7 +30,7 @@ export default function Home() {
         </p>
       </section>
 
-      <div className="min-h-150 w-full">
+      <div className="min-h-140 w-full">
         {typeof prayers === "undefined" ? (
           <div className="mt-52 flex justify-center items-center ">
             <Loader className="animate-spin" />
@@ -52,11 +52,11 @@ export default function Home() {
         )}
       </div>
 
-      <div className="fixed bottom-12 right-12">
+      <div className="fixed bottom-16 right-12">
         <AddNewPrayerForm />
       </div>
       {lang === "en" && (
-        <div className="text-xs text-neutral-500 ">
+        <div className="mt-12 text-xs text-neutral-500 ">
           <p className="">
             ESV® Bible (The Holy Bible, English Standard Version®), <br /> ©
             2001 by Crossway, a publishing ministry of Good News Publishers.{" "}
