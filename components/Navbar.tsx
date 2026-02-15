@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import ChangeBibleVersions from "./ChangeBibleVersions";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MenuIcon, XIcon, Zap } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useState } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="fixed top-0 w-full z-30 bg-yellow-300 backdrop-blur-md p-4 border-b-3 border-black flex flex-row justify-between items-center ">
@@ -18,28 +19,30 @@ export default function Navbar() {
           <PopoverTrigger asChild>
             {!isOpen ? <MenuIcon /> : <XIcon />}
           </PopoverTrigger>
-          <PopoverContent className=" fixed top-4 bg-yellow-300 shadow-none border-0 -left-7 w-screen h-screen rounded-none flex flex-col gap-4 z-30">
-            <Link
-              href={"/"}
-              onClick={() => setIsOpen(false)}
-              className={pathname === "/" ? " bg-yellow-200" : ""}
+          <PopoverContent className="p-12 fixed top-4 bg-yellow-300 shadow-none border-0 -left-7 w-screen h-screen rounded-none flex flex-col items-center gap-8 z-30">
+            <Button
+              variant={"link"}
+              onClick={() => {
+                router.push("/");
+                setIsOpen(false);
+              }}
+              className={pathname === "/" ? " bg-yellow-200 w-full" : ""}
             >
-              <Button variant={"link"} className="text-4xl">
-                Prayer Board
-              </Button>
-            </Link>
+              <div className="text-4xl">Prayer Board</div>
+            </Button>
 
-            <Link
-              href={"/my-prayers"}
-              onClick={() => setIsOpen(false)}
+            <Button
+              variant={"link"}
+              onClick={() => {
+                router.push("/my-prayers");
+                setIsOpen(false);
+              }}
               className={
-                pathname === "/my-prayers" ? "bg-yellow-200 mr-4" : "mr-4"
+                pathname === "/my-prayers" ? "bg-yellow-200  w-full" : ""
               }
             >
-              <Button variant={"link"} className="text-4xl">
-                My Prayers
-              </Button>
-            </Link>
+              <div className="text-4xl">My Prayers</div>
+            </Button>
             <ChangeBibleVersions />
           </PopoverContent>
         </Popover>
