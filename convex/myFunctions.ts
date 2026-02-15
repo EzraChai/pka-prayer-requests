@@ -521,13 +521,13 @@ export const checkAndAddPrayer = action({
       html: `
       <!DOCTYPE html>
       <html>
-      <body style="margin:0; padding:0; background-color:#f4f4f4; font-family: Arial, sans-serif;">
+      <body style="margin:0; padding:0; font-family: Arial, sans-serif;">
         <table width="100%" cellpadding="0" cellspacing="0" border="0"
-          style="background-color:#f4f4f4; padding:20px 0;">
+           padding:20px 0;">
           <tr>
             <td align="center">
               <table width="600" cellpadding="0" cellspacing="0" border="0"
-                style="background:#ffffff; border-radius:8px; overflow:hidden;">
+                  overflow:hidden;">
 
                 <!-- Title -->
                 <tr>
