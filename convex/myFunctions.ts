@@ -6,7 +6,7 @@ import {
   internalMutation,
   mutation,
 } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import {
   formatBibleVerseESV,
   generateUrlSafeToken,
@@ -480,83 +480,6 @@ export const checkAndAddPrayer = action({
       color: args.color,
       isPublic: args.isPublic,
     });
-
-    const resend = new Resend();
-
-    const verseBlock = args.bibleVerses
-      ? `
-      <tr>
-        <td style="padding:0 30px 30px 30px;">
-          <table width="100%" cellpadding="15" cellspacing="0" border="0"
-            style="background:#f9f9f9; border-left:4px solid ${args.color};">
-            <tr>
-              <td>
-                ${
-                  args.bibleVerses
-                    ? `<p style="margin:0; font-weight:bold; color:#333;">📖 ${args.bibleVerses}</p>`
-                    : ""
-                }
-                ${
-                  versesTextESV
-                    ? `<p style="margin:10px 0 0 0; font-style:italic; color:#555;">${versesTextESV}</p>`
-                    : ""
-                }
-                ${
-                  versesTextCUVS
-                    ? `<p style="margin:10px 0 0 0; color:#666;">${versesTextCUVS}</p>`
-                    : ""
-                }
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    `
-      : "";
-
-    await resend.emails.send({
-      from: "PKA Prayer Care <noreply@resend.dev>",
-      to: ["juanzhe2@gmail.com"],
-      subject: `🙏 ${args.title}`,
-      html: `
-      <!DOCTYPE html>
-      <html>
-      <body style="margin:0; padding:0; font-family: Arial, sans-serif;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0"
-           padding:20px 0;">
-          <tr>
-            <td align="center">
-              <table width="600" cellpadding="0" cellspacing="0" border="0"
-                  overflow:hidden;">
-
-                <!-- Title -->
-                <tr>
-                  <td style="padding:25px 30px 10px 30px;">
-                    <h2 style="margin:0; font-size:20px; color:#333333;">
-                      ${args.title}
-                    </h2>
-                    ${args.username ? `<p style="margin:0; font-size:16px; color:#777777;">Requested by: ${args.username}</p>` : ""}
-                  </td>
-                </tr>
-
-                <!-- Content -->
-                <tr>
-                  <td style="padding:15px 30px 25px 30px;">
-                    <p style="margin:0; font-size:16px; line-height:1.6; color:#444444;">
-                      ${args.content}
-                    </p>
-                  </td>
-                </tr>
-
-                ${verseBlock}
-
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-      </html>`,
-    });
   },
 });
 
@@ -609,7 +532,6 @@ export const addPrayer = internalMutation({
         username: args.username,
         isPublic: args.isPublic,
       });
-      return;
     } else {
       await ctx.db.insert("prayers", {
         content: args.content,
@@ -625,7 +547,42 @@ export const addPrayer = internalMutation({
         username: args.username,
         isPublic: args.isPublic,
       });
-      return;
+    }
+    ctx.scheduler.runAfter(0, api.myFunctions.sendToTelegram, {
+      message: `🙏 *New Prayer Request*
+
+📝 *${args.title}*
+
+📖 _${args.bibleVerseRef}_  
+${args.bibleVerseESV || args.bibleVerseCUVS}
+
+💬 *Prayer:*
+${args.content}
+
+👤 _Submitted by ${args.username ? args.username : "Anonymous"}_`,
+    });
+  },
+});
+
+export const sendToTelegram = action({
+  args: {
+    message: v.string(),
+  },
+  handler: async (_, args) => {
+    const res = await fetch(
+      `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: "@pkaprayercare",
+          text: args.message,
+        }),
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(await res.text());
     }
   },
 });
