@@ -224,13 +224,13 @@ export function AddNewPrayerForm() {
                     {(field) => (
                       <Field>
                         <Input
-                          className="border-2 border-black"
+                          className="border-2 border-black text-xs"
                           id={field.name}
                           name={field.name}
                           value={field.state.value || ""}
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder="Your Name (Optional)"
+                          placeholder="Name (Optional)"
                           autoComplete="off"
                         />
                       </Field>

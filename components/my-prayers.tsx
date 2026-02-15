@@ -33,7 +33,7 @@ export default function MyPrayers() {
         ))}
       </div>
     ) : (
-      <div className="mt-24 text-center py-4 text-neutral-500">
+      <div className="mt-12 md:mt-24 text-center py-4 text-neutral-500">
         No prayers found. Add your prayer now!
       </div>
     );

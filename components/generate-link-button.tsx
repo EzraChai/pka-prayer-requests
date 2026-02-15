@@ -37,7 +37,7 @@ export default function GenerateLinkButton() {
       <DialogContent className="">
         <DialogTitle>Unique Link</DialogTitle>
         <p>Your unique link has been generated:</p>
-        <div className="inline-flex gap-2">
+        <div className="flex flex-col gap-2">
           <input
             className="border-2 flex-1 px-2 border-black bg-white"
             type="text"
@@ -45,7 +45,7 @@ export default function GenerateLinkButton() {
             value={link}
           />
           <Button
-            className="bg-yellow-300 hover:bg-yellow-300 px-2 border-2 text-black border-black font-semibold"
+            className="mt-1 bg-yellow-300 hover:bg-yellow-300 px-2 border-2 text-black border-black font-semibold"
             onClick={() => {
               if (link && navigator.clipboard) {
                 navigator.clipboard.writeText(link);
@@ -53,7 +53,7 @@ export default function GenerateLinkButton() {
               }
             }}
           >
-            Copy
+            Copy Link
           </Button>
         </div>
       </DialogContent>

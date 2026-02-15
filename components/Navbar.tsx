@@ -26,7 +26,11 @@ export default function Navbar() {
                 router.push("/");
                 setIsOpen(false);
               }}
-              className={pathname === "/" ? " bg-yellow-200 w-full" : ""}
+              className={
+                pathname === "/"
+                  ? " bg-yellow-200 w-full underline-none"
+                  : "underline-none"
+              }
             >
               <div className="text-4xl">Prayer Board</div>
             </Button>
@@ -38,7 +42,9 @@ export default function Navbar() {
                 setIsOpen(false);
               }}
               className={
-                pathname === "/my-prayers" ? "bg-yellow-200  w-full" : ""
+                pathname === "/my-prayers"
+                  ? "bg-yellow-200  w-full underline-none"
+                  : "underline-none"
               }
             >
               <div className="text-4xl">My Prayers</div>

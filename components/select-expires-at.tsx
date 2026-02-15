@@ -16,16 +16,20 @@ export default function SelectExpiresAt({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={` border-2 border-black font-normal 
+          className={` border-2 border-black font-normal px-2
             ${color === "yellow" && "bg-yellow-200 hover:bg-yellow-300"} 
             ${color === "white" && "bg-white hover:bg-gray-100"} 
             ${color === "cyan" && "bg-cyan-200 hover:bg-cyan-300"} 
             ${color === "red" && "bg-red-200 hover:bg-red-300"}
             ${color === "green" && "bg-lime-200 hover:bg-lime-300"}`}
         >
-          {value
-            ? new Date(value).toLocaleDateString()
-            : "Expired At (Optional)"}
+          {value ? (
+            new Date(value).toLocaleDateString()
+          ) : (
+            <span className="text-neutral-500 text-xs">
+              Expired At (Optional)
+            </span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className={`p-0 rounded-none border-2 border-black `}>
