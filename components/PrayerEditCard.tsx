@@ -4,7 +4,7 @@ import moment from "moment";
 import { LanguageContext } from "./LanguageContextProvider";
 import { Fragment, use } from "react";
 import { useMutation } from "convex/react";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
 import { Doc } from "@/convex/_generated/dataModel";
 import {

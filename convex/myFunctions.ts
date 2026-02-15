@@ -14,6 +14,7 @@ import {
 } from "../lib/utils";
 import { Doc, Id } from "./_generated/dataModel";
 import { BIBLE_BOOKS } from "../lib/bible-data";
+import { Resend } from "resend";
 
 // Write your Convex functions in any file inside this directory (`convex`).
 // See https://docs.convex.dev/functions for more.
@@ -475,6 +476,83 @@ export const checkAndAddPrayer = action({
       createdBy: user._id,
       color: args.color,
       isPublic: args.isPublic,
+    });
+
+    const resend = new Resend();
+
+    const verseBlock = args.bibleVerses
+      ? `
+      <tr>
+        <td style="padding:0 30px 30px 30px;">
+          <table width="100%" cellpadding="15" cellspacing="0" border="0"
+            style="background:#f9f9f9; border-left:4px solid ${args.color};">
+            <tr>
+              <td>
+                ${
+                  args.bibleVerses
+                    ? `<p style="margin:0; font-weight:bold; color:#333;">📖 ${args.bibleVerses}</p>`
+                    : ""
+                }
+                ${
+                  versesTextESV
+                    ? `<p style="margin:10px 0 0 0; font-style:italic; color:#555;">${versesTextESV}</p>`
+                    : ""
+                }
+                ${
+                  versesTextCUVS
+                    ? `<p style="margin:10px 0 0 0; color:#666;">${versesTextCUVS}</p>`
+                    : ""
+                }
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    `
+      : "";
+
+    await resend.emails.send({
+      from: "PKA Prayer Request <noreply@resend.dev>",
+      to: ["juanzhe2@gmail.com"],
+      subject: `🙏 ${args.title}`,
+      html: `
+      <!DOCTYPE html>
+      <html>
+      <body style="margin:0; padding:0; background-color:#f4f4f4; font-family: Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"
+          style="background-color:#f4f4f4; padding:20px 0;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" border="0"
+                style="background:#ffffff; border-radius:8px; overflow:hidden;">
+
+                <!-- Title -->
+                <tr>
+                  <td style="padding:25px 30px 10px 30px;">
+                    <h2 style="margin:0; font-size:20px; color:#333333;">
+                      ${args.title}
+                    </h2>
+                    ${args.username ? `<p style="margin:0; font-size:16px; color:#777777;">Requested by: ${args.username}</p>` : ""}
+                  </td>
+                </tr>
+
+                <!-- Content -->
+                <tr>
+                  <td style="padding:15px 30px 25px 30px;">
+                    <p style="margin:0; font-size:16px; line-height:1.6; color:#444444;">
+                      ${args.content}
+                    </p>
+                  </td>
+                </tr>
+
+                ${verseBlock}
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>`,
     });
   },
 });
