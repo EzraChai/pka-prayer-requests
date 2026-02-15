@@ -8,6 +8,7 @@ import { LanguageContext } from "@/components/LanguageContextProvider";
 import { use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 export default function Home() {
   const context = use(LanguageContext);
@@ -29,13 +30,28 @@ export default function Home() {
         </p>
       </section>
 
-      <div className=" min-h-150 mt-8 columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12">
-        {prayers
-          ? prayers.map((prayer) => (
-              <PrayerCard key={prayer._id} prayer={prayer} />
-            ))
-          : null}
+      <div className="min-h-150 w-full">
+        {typeof prayers === "undefined" ? (
+          <div className="mt-52 flex justify-center items-center ">
+            <Loader className="animate-spin" />
+          </div>
+        ) : (
+          <>
+            {prayers && prayers.length > 0 ? (
+              <div className="mt-8 columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12">
+                {prayers.map((prayer) => (
+                  <PrayerCard key={prayer._id} prayer={prayer} />
+                ))}
+              </div>
+            ) : (
+              <div className=" mt-52 flex justify-center items-center text-neutral-500 ">
+                Add your prayer now!
+              </div>
+            )}
+          </>
+        )}
       </div>
+
       <div className="fixed bottom-12 right-12">
         <AddNewPrayerForm />
       </div>
