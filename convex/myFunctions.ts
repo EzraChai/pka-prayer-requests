@@ -547,10 +547,10 @@ export const addPrayer = internalMutation({
     ctx.scheduler.runAfter(0, api.myFunctions.sendToTelegram, {
       message: `🙏 *New Prayer Request*
 
-📝 *${args.title}*
+📝 *${args.title.replaceAll(".", "\\.")}*
 
 💬 *Prayer:*
-${args.content}
+${args.content.replaceAll(".", "\\.")}
 ${
   args.bibleVerseRef &&
   `
@@ -561,7 +561,7 @@ _${args.bibleVerseCUVS?.replaceAll(".", "\\.")}_
     `
 }
 
-👤 Submitted by ${args.username ? args.username : "Anonymous"}`,
+👤 Submitted by ${args.username ? args.username.replaceAll(".", "\\.") : "Anonymous"}`,
     });
   },
 });
