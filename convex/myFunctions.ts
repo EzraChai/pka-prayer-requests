@@ -270,6 +270,9 @@ export const getAllPrayersById = query({
     userId: v.string(),
   },
   handler: async (ctx, args): Promise<Doc<"prayers">[]> => {
+    if (args.userId === "") {
+      return [];
+    }
     const user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
       userId: args.userId,
     });
@@ -512,7 +515,7 @@ export const checkAndAddPrayer = action({
       : "";
 
     await resend.emails.send({
-      from: "PKA Prayer Request <noreply@resend.dev>",
+      from: "PKA Prayer Care <noreply@resend.dev>",
       to: ["juanzhe2@gmail.com"],
       subject: `🙏 ${args.title}`,
       html: `

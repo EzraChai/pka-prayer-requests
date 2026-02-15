@@ -5,12 +5,11 @@ import { api } from "@/convex/_generated/api";
 import PrayerEditCard from "./PrayerEditCard";
 
 export default function MyPrayers() {
+  const userId = localStorage.getItem("userId");
   const prayers = useQuery(api.myFunctions.getAllPrayersById, {
-    userId:
-      typeof window !== "undefined"
-        ? (localStorage.getItem("userId") ?? "")
-        : "",
+    userId: userId ?? "",
   });
+
   if (typeof prayers == "undefined") {
     return <div className="">Loading</div>;
   } else {
