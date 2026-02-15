@@ -4,12 +4,46 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import ChangeBibleVersions from "./ChangeBibleVersions";
 import { usePathname } from "next/navigation";
-import { Zap } from "lucide-react";
+import { MenuIcon, XIcon, Zap } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useState } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <header className="fixed top-0 w-full z-10 bg-yellow-300 backdrop-blur-md p-4 border-b-3 border-black flex flex-row justify-between items-center ">
+    <header className="fixed top-0 w-full z-30 bg-yellow-300 backdrop-blur-md p-4 border-b-3 border-black flex flex-row justify-between items-center ">
+      <div className="md:hidden">
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild>
+            {!isOpen ? <MenuIcon /> : <XIcon />}
+          </PopoverTrigger>
+          <PopoverContent className=" fixed top-4 bg-yellow-300 shadow-none border-0 -left-7 w-screen h-screen rounded-none flex flex-col gap-4 z-30">
+            <Link
+              href={"/"}
+              onClick={() => setIsOpen(false)}
+              className={pathname === "/" ? " bg-yellow-200" : ""}
+            >
+              <Button variant={"link"} className="text-4xl">
+                Prayer Board
+              </Button>
+            </Link>
+
+            <Link
+              href={"/my-prayers"}
+              onClick={() => setIsOpen(false)}
+              className={
+                pathname === "/my-prayers" ? "bg-yellow-200 mr-4" : "mr-4"
+              }
+            >
+              <Button variant={"link"} className="text-4xl">
+                My Prayers
+              </Button>
+            </Link>
+            <ChangeBibleVersions />
+          </PopoverContent>
+        </Popover>
+      </div>
       <Link
         href={"/"}
         className="uppercase italic text-xl font-bold flex gap-3 items-center"
@@ -17,9 +51,10 @@ export default function Navbar() {
         <Button className="w-9 bg-red-500 border-2 -rotate-5">
           <Zap fill="white" />
         </Button>
-        <span className="hidden lg:block">PRAYERCARE</span>
+        <span className="">PRAYERCARE</span>
       </Link>
-      <div className="flex items-center">
+      <div className="md:hidden"></div>
+      <div className="hidden md:flex items-center">
         <Link href={"/"} className={pathname === "/" ? " bg-yellow-200" : ""}>
           <Button variant={"link"} className="">
             Prayer Board

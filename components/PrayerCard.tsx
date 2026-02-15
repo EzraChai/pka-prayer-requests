@@ -64,7 +64,7 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
       <CardAction className="px-4 pb-2 flex w-full items-center justify-between">
         <Button
           disabled={prayer.prayed}
-          className="relative w-24 bg-white hover:bg-white text-neutral-800 border-2"
+          className="relative z-10 w-24 bg-white hover:bg-white text-neutral-800 border-2"
           onClick={async (e) => {
             setIsLoading(true);
             let userId = localStorage.getItem("userId");
