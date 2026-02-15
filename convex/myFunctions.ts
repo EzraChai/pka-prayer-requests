@@ -554,18 +554,14 @@ ${args.content}
 
 ${
   args.bibleVerseRef &&
-  `
-    📖 _${BIBLE_BOOKS.find((book) => book.abbr === args.bibleVerseRef?.split(" ")[0])?.engName} ${args.bibleVerseRef?.split(" ")[1]}_
+  `📖 _${BIBLE_BOOKS.find((book) => book.abbr === args.bibleVerseRef?.split(" ")[0])?.engName} ${args.bibleVerseRef?.split(" ")[1]}_
 
-    _${args.bibleVerseESV?.replaceAll(".", "\\.")}_
-
-    _${args.bibleVerseCUVS?.replaceAll(".", "\\.")}_
+_${args.bibleVerseESV?.replaceAll(".", "\\.")}_
+_${args.bibleVerseCUVS?.replaceAll(".", "\\.")}_
     `
 }
 
-
-
-👤 _Submitted by ${args.username ? args.username : "Anonymous"}_`,
+👤 Submitted by ${args.username ? args.username : "Anonymous"}`,
     });
   },
 });
