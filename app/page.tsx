@@ -2,8 +2,8 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
-import PrayerCard from "@/components/PrayerCard";
-import { AddNewPrayerForm } from "../components/addPrayerForm";
+import PrayerCard from "@/components/prayer-card";
+import { AddNewPrayerForm } from "../components/add-prayer-form";
 import { LanguageContext } from "@/components/LanguageContextProvider";
 import { use } from "react";
 import Link from "next/link";

@@ -1,6 +1,6 @@
 "use client";
 
-import LinkDevice from "@/components/Linkdevice";
+import LinkDevice from "@/components/link-device";
 import { Loader } from "lucide-react";
 import { Suspense } from "react";
 

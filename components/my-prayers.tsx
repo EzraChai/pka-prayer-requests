@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import PrayerEditCard from "./PrayerEditCard";
+import PrayerEditCard from "./edit-prayer-card";
 import { useState } from "react";
 import { Loader } from "lucide-react";
 

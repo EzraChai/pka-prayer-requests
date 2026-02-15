@@ -19,9 +19,9 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { api } from "@/convex/_generated/api";
-import { EditPrayerForm } from "./editPrayerForm";
+import { EditPrayerForm } from "./edit-prayer-form";
 
-export default function PrayerEditCard({ prayer }: { prayer: Doc<"prayers"> }) {
+export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
   const deletePrayer = useMutation(api.myFunctions.deletePrayerById);

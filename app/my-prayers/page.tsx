@@ -1,6 +1,6 @@
-import { AddNewPrayerForm } from "@/components/addPrayerForm";
-import GenerateLinkButton from "@/components/GenerateLinkButton";
-import MyPrayers from "@/components/MyPrayers";
+import { AddNewPrayerForm } from "@/components/add-prayer-form";
+import GenerateLinkButton from "@/components/generate-link-button";
+import MyPrayers from "@/components/my-prayers";
 import { Card } from "@/components/ui/card";
 import { Edit } from "lucide-react";
 

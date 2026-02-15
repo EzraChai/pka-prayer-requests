@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
-import ChangeBibleVersions from "./ChangeBibleVersions";
+import ChangeBibleVersions from "./change-bible-versions";
 import { usePathname, useRouter } from "next/navigation";
 import { MenuIcon, XIcon, Zap } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
