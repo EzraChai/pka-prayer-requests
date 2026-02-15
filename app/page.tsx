@@ -29,7 +29,7 @@ export default function Home() {
         </p>
       </section>
 
-      <div className=" min-h-120 mt-8 columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12">
+      <div className=" min-h-150 mt-8 columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12">
         {prayers
           ? prayers.map((prayer) => (
               <PrayerCard key={prayer._id} prayer={prayer} />
