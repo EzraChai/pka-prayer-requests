@@ -265,27 +265,29 @@ export default function SelectBibleVersesDialog({
               {BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)?.totalChapters}{" "}
               {lang === "en" ? "Chapters available." : "章"}
             </div>
-            <div className="grid grid-cols-10 gap-2 max-h-96 w-full overflow-y-scroll">
-              {Array.from(
-                {
-                  length:
-                    BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)
-                      ?.totalChapters || 0,
-                },
-                (_, i) => i + 1,
-              ).map((chapter) => (
-                <Button
-                  className={`p-0 flex justify-center border ${(color === "yellow" || color === "white") && " hover:bg-yellow-200"} ${color === "cyan" && " hover:bg-cyan-200"} ${color === "red" && " hover:bg-red-200"} items-center px-2 py-1 cursor-pointer`}
-                  key={chapter}
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setChapter(chapter);
-                  }}
-                >
-                  <h3 className="font-bold">{chapter}</h3>
-                </Button>
-              ))}
+            <div className="w-full max-h-96 overflow-y-auto">
+              <div className="flex flex-wrap gap-2 ">
+                {Array.from(
+                  {
+                    length:
+                      BIBLE_BOOKS.find((b) => b.abbr === bookAbbr)
+                        ?.totalChapters || 0,
+                  },
+                  (_, i) => i + 1,
+                ).map((chapter) => (
+                  <Button
+                    className={`w-12 flex justify-center border ${(color === "yellow" || color === "white") && " hover:bg-yellow-200"} ${color === "cyan" && " hover:bg-cyan-200"} ${color === "red" && " hover:bg-red-200"} items-center px-2 py-1 cursor-pointer`}
+                    key={chapter}
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setChapter(chapter);
+                    }}
+                  >
+                    <h3 className="font-bold">{chapter}</h3>
+                  </Button>
+                ))}
+              </div>
             </div>
           </>
         )}
