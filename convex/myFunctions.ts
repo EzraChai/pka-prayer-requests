@@ -551,10 +551,10 @@ export const addPrayer = internalMutation({
 
 💬 *Prayer:*
 ${args.content}
-
 ${
   args.bibleVerseRef &&
-  `📖 _${BIBLE_BOOKS.find((book) => book.abbr === args.bibleVerseRef?.split(" ")[0])?.engName} ${args.bibleVerseRef?.split(" ")[1]}_
+  `
+📖 _${BIBLE_BOOKS.find((book) => book.abbr === args.bibleVerseRef?.split(" ")[0])?.engName} ${args.bibleVerseRef?.split(" ")[1]}_
 
 _${args.bibleVerseESV?.replaceAll(".", "\\.")}_
 _${args.bibleVerseCUVS?.replaceAll(".", "\\.")}_

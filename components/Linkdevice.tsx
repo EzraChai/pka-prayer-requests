@@ -1,8 +1,10 @@
+"use client";
+
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
 import { ConvexError } from "convex/values";
 import { Link2, Loader, Link2Off } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, use } from "react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
@@ -46,15 +48,17 @@ export default function LinkDevice({
     verifyTokenAndSet(params.token);
   }, []);
   return (
-    <div className="w-full flex flex-col justify-center items-center p-12 text-center">
+    <div className="mt-24 w-full flex flex-col justify-center items-center p-12 text-center">
       {statusCode === "SUCCESS" && (
-        <Card className="bg-lime-400 mt-12 w-lg p-8 text-white font-bold flex flex-col items-center">
+        <Card className=" bg-lime-400 mt-12 w-sm md:w-lg p-8 text-white font-bold flex flex-col items-center">
           <button className=" px-4 w-24 h-24 flex justify-center items-center bg-yellow-300 text-black border-3 border-black rotate-3  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 ease-out hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ">
             <Link2 className="w-24 h-24" />
           </button>
-          <h3 className="mt-4 text-3xl font-bold text-black">Device Linked</h3>
+          <h3 className="mt-4 text-2xl md:text-3xl font-bold text-black">
+            Device Linked
+          </h3>
 
-          <h2 className="text-5xl font-black -rotate-2 mt-3 bg-yellow-300 text-black px-2 ">
+          <h2 className=" text-3xl md:text-5xl font-black -rotate-2 mt-3 bg-yellow-300 text-black px-2 ">
             Successfully
           </h2>
           <div className="mt-4">
@@ -63,7 +67,7 @@ export default function LinkDevice({
             </p>
             <Button
               onClick={() => router.replace("/my-prayers")}
-              className="w-sm mt-4 text-xl font-bold py-8 bg-neutral-800 border-3"
+              className="w-full md:w-sm mt-4 text-xl font-bold py-8 bg-neutral-800 border-3"
             >
               My Prayers
             </Button>
@@ -77,22 +81,24 @@ export default function LinkDevice({
         </div>
       )}
       {error && (
-        <Card className="bg-red-500 mt-12 w-lg p-8 text-white font-bold flex flex-col items-center">
-          <button className=" px-4 w-24 h-24 flex justify-center items-center bg-yellow-300 text-black border-3 border-black rotate-3  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 ease-out hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ">
+        <Card className="bg-red-500 mt-12 w-sm md:w-lg p-8 text-white font-bold flex flex-col items-center">
+          <button className="px-4 w-24 h-24 flex justify-center items-center bg-yellow-300 text-black border-3 border-black rotate-3  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 ease-out hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ">
             <Link2Off className="w-24 h-24" />
           </button>
-          <h3 className="mt-4 text-3xl font-bold">Oppss... We have a </h3>
+          <h3 className="mt-4 text-2xl md:text-3xl font-bold">
+            Oppss... We have a{" "}
+          </h3>
 
-          <h2 className="text-5xl font-black -rotate-2 mt-3 bg-yellow-300 text-black px-2 ">
+          <h2 className=" text-4xl md:text-5xl font-black -rotate-2 mt-3 bg-yellow-300 text-black px-2 ">
             Linking Problem
           </h2>
-          <p className="bg-white w-sm text-left border-3 border-black text-neutral-800 p-4 mt-6">
+          <p className="bg-white w-full md:w-sm text-left border-3 border-black text-neutral-800 p-4 mt-6">
             <span className="underline">Error:</span> <br />
             {error}
           </p>
           <Button
             onClick={() => router.replace("/")}
-            className="w-sm mt-4 text-xl font-bold py-8 bg-neutral-800 border-3"
+            className="w-full md:w-sm mt-4 text-xl font-bold py-8 bg-neutral-800 border-3"
           >
             Home
           </Button>

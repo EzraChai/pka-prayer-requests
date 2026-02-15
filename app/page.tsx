@@ -21,16 +21,18 @@ export default function Home() {
   });
 
   return (
-    <main className="p-12 flex flex-col">
+    <main className="mt-24 p-4 md:p-12 flex flex-col">
       <section>
-        <h1 className="text-4xl font-bold">PKA Prayer Care</h1>
+        <h1 className="text-4xl font-bold">
+          PKA <span>Prayer Care</span>
+        </h1>
         <p className="mt-2">
           Welcome to the PKA Prayer Care. Share your prayers and support others
           in their spiritual journey.
         </p>
       </section>
 
-      <div className="min-h-140 w-full">
+      <div className="md:min-h-140 w-full">
         {typeof prayers === "undefined" ? (
           <div className="mt-52 flex justify-center items-center ">
             <Loader className="animate-spin" />
@@ -52,11 +54,11 @@ export default function Home() {
         )}
       </div>
 
-      <div className="fixed bottom-16 right-12">
+      <div className="fixed bottom-4 md:bottom-16 right-4 md:right-12">
         <AddNewPrayerForm />
       </div>
       {lang === "en" && (
-        <div className="mt-12 text-xs text-neutral-500 ">
+        <div className="mt-12 text-xs text-neutral-500 text-center mb-24 md:mb-0 md:text-left  ">
           <p className="">
             ESV® Bible (The Holy Bible, English Standard Version®), <br /> ©
             2001 by Crossway, a publishing ministry of Good News Publishers.{" "}

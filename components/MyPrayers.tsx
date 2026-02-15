@@ -27,7 +27,7 @@ export default function MyPrayers() {
     );
   } else {
     return prayers.length > 0 ? (
-      <div className=" min-h-90 mt-8 columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12 py-4">
+      <div className=" min-h-90 mt-4 md:mt-8 columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12 py-4">
         {prayers.map((prayer) => (
           <PrayerEditCard prayer={prayer} key={prayer._id} />
         ))}

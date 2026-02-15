@@ -9,7 +9,7 @@ import { Zap } from "lucide-react";
 export default function Navbar() {
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-10  bg-yellow-300 backdrop-blur-md p-4 border-b-3 border-black flex flex-row justify-between items-center ">
+    <header className="fixed top-0 w-full z-10 bg-yellow-300 backdrop-blur-md p-4 border-b-3 border-black flex flex-row justify-between items-center ">
       <Link
         href={"/"}
         className="uppercase italic text-xl font-bold flex gap-3 items-center"
@@ -17,7 +17,7 @@ export default function Navbar() {
         <Button className="w-9 bg-red-500 border-2 -rotate-5">
           <Zap fill="white" />
         </Button>
-        PRAYERCARE
+        <span className="hidden lg:block">PRAYERCARE</span>
       </Link>
       <div className="flex items-center">
         <Link href={"/"} className={pathname === "/" ? " bg-yellow-200" : ""}>

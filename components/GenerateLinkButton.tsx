@@ -28,7 +28,7 @@ export default function GenerateLinkButton() {
               setOpen(true);
             }
           }}
-          className="bg-indigo-600 border-3 text-3xl font-black p-8"
+          className="bg-indigo-600 w-full border-3 text-3xl font-black p-8"
         >
           Unique Link
         </Button>
