@@ -14,10 +14,6 @@ import {
 } from "../lib/utils";
 import { Doc, Id } from "./_generated/dataModel";
 import { BIBLE_BOOKS } from "../lib/bible-data";
-import { Resend } from "resend";
-
-// Write your Convex functions in any file inside this directory (`convex`).
-// See https://docs.convex.dev/functions for more.
 
 export const addUser = internalMutation({
   args: {
