@@ -35,7 +35,7 @@ export default function MyPrayersPage() {
           <GenerateLinkButton />
         </div>
       </Card>
-      <section className="mt-12 px-4 md:px-12">
+      <section className="mt-12 mb-12 px-4 md:px-12">
         <h2 className="text-2xl font-bold">My Prayers</h2>
         <p className="text-lg">Here you can find all your written prayers.</p>
         <MyPrayers />
