@@ -4,7 +4,7 @@ import "./globals.css";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import LanguageProvider from "@/components/LanguageContextProvider";
 import { Toaster } from "sonner";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
