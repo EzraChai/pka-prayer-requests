@@ -81,7 +81,7 @@ export default function Home() {
           )}
         </div>
       </div>
-      {typeof window !== "undefined" && lang === "en" && (
+      {typeof window !== "undefined" && lang === "en" ? (
         <div className="mt-12 text-xs text-neutral-500 text-center mb-24 md:mb-0 md:text-left">
           <p>
             ESV® Bible (The Holy Bible, English Standard Version®), <br />© 2001
@@ -94,6 +94,8 @@ export default function Home() {
             </Button>
           </Link>
         </div>
+      ) : (
+        <div className="mt-12"></div>
       )}
       <div className="fixed bottom-4 md:bottom-16 right-4 md:right-12">
         <AddNewPrayerForm />
