@@ -46,6 +46,7 @@ export default function GenerateLinkButton() {
             value={link}
           />
           <Button
+            disabled={!link}
             className="mt-1 bg-yellow-300 hover:bg-yellow-300 px-2 border-2 text-black border-black font-semibold"
             onClick={() => {
               if (link && navigator.clipboard) {

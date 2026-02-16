@@ -18,6 +18,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PKA Prayer Care",
+  authors: [
+    {
+      name: "PKA Team",
+      url: "https://linktr.ee/pkausm",
+    },
+  ],
+  description:
+    "PKA Prayer Care provides a caring space to share your burdens and joys, offering prayer, encouragement, and spiritual support. We aim to bring hope, comfort, and God’s presence to everyone, reminding you that you are never alone.",
+  keywords: [
+    "prayer",
+    "spiritual support",
+    "encouragement",
+    "faith",
+    "hope",
+    "comfort",
+    "community",
+    "Christian care",
+    "ministry",
+  ],
   icons: {
     icon: "/convex.svg",
   },
