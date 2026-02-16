@@ -6,6 +6,7 @@ import { useAction } from "convex/react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 export default function GenerateLinkButton() {
   const generateLink = useAction(api.myFunctions.generateToken);
@@ -53,7 +54,7 @@ export default function GenerateLinkButton() {
               }
             }}
           >
-            Copy Link
+            {link ? "Copy Link" : <Loader className="animate-spin" />}
           </Button>
         </div>
       </DialogContent>
