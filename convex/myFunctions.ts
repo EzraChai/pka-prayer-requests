@@ -14,6 +14,7 @@ import {
 } from "../lib/utils";
 import { Doc, Id } from "./_generated/dataModel";
 import { BIBLE_BOOKS } from "../lib/bible-data";
+import { paginationOptsValidator, PaginationResult } from "convex/server";
 
 export const addUser = internalMutation({
   args: {
@@ -241,8 +242,9 @@ export type PrayerWithStatus = Doc<"prayers"> & { prayed: boolean };
 export const getAllPrayers = query({
   args: {
     userId: v.string(),
+    paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, args): Promise<PrayerWithStatus[]> => {
+  handler: async (ctx, args): Promise<PaginationResult<PrayerWithStatus>> => {
     let user: Doc<"users"> | null = null;
 
     if (args.userId !== "") {
@@ -256,6 +258,7 @@ export const getAllPrayers = query({
       internal.myFunctions.getAllPrayersAndPrayerClicked,
       {
         userId: user?._id ?? undefined,
+        paginationOpts: args.paginationOpts,
       },
     );
   },
@@ -296,13 +299,14 @@ export const deletePrayerById = mutation({
 export const getAllPrayersAndPrayerClicked = internalQuery({
   args: {
     userId: v.optional(v.id("users")),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const prayers = await ctx.db
       .query("prayers")
       .withIndex("by_createdAtAndIsPublic", (q) => q.eq("isPublic", true))
       .order("desc")
-      .collect();
+      .paginate(args.paginationOpts);
 
     if (args.userId !== undefined) {
       const userPrays = await ctx.db
@@ -312,16 +316,21 @@ export const getAllPrayersAndPrayerClicked = internalQuery({
 
       const prayedSet = new Set(userPrays.map((p) => p.prayerId));
 
-      // Add `prayed` field to each prayer
-      return prayers.map((prayer) => ({
-        ...prayer,
-        prayed: prayedSet.has(prayer._id),
-      }));
+      return {
+        ...prayers,
+        page: prayers.page.map((prayer) => ({
+          ...prayer,
+          prayed: prayedSet.has(prayer._id),
+        })),
+      };
     } else {
-      return prayers.map((prayer) => ({
-        ...prayer,
-        prayed: false,
-      }));
+      return {
+        ...prayers,
+        page: prayers.page.map((prayer) => ({
+          ...prayer,
+          prayed: false,
+        })),
+      };
     }
   },
 });
@@ -547,24 +556,38 @@ export const addPrayer = internalMutation({
     ctx.scheduler.runAfter(0, api.myFunctions.sendToTelegram, {
       message: `🙏 *New Prayer Request*
 
-📝 *${args.title.replaceAll(".", "\\.")}*
+📝 *${escapeTelegramMarkdown(args.title)}*
 
 💬 *Prayer:*
-${args.content.replaceAll(".", "\\.")}
+${escapeTelegramMarkdown(args.content)}
 ${
   args.bibleVerseRef &&
+  args.bibleVerseESV &&
+  args.bibleVerseCUVS &&
   `
 📖 _${BIBLE_BOOKS.find((book) => book.abbr === args.bibleVerseRef?.split(" ")[0])?.engName} ${args.bibleVerseRef?.split(" ")[1]}_
 
-_${args.bibleVerseESV?.replaceAll(".", "\\.")}_
-_${args.bibleVerseCUVS?.replaceAll(".", "\\.")}_
+_${escapeTelegramMarkdown(args.bibleVerseESV)}_
+_${escapeTelegramMarkdown(args.bibleVerseCUVS)}_
     `
 }
 
-👤 Submitted by ${args.username ? args.username.replaceAll(".", "\\.") : "Anonymous"}`,
+👤 Submitted by ${args.username ? escapeTelegramMarkdown(args.username) : "Anonymous"}`,
     });
   },
 });
+
+function escapeTelegramMarkdown(text: string): string {
+  // Escape all special characters for Telegram Markdown V2
+  const specialChars = "_*[]()~`>#+-=|{}.!";
+  return text?.replace(
+    new RegExp(
+      `([${specialChars.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}])`,
+      "g",
+    ),
+    "\\$1",
+  );
+}
 
 export const sendToTelegram = action({
   args: {

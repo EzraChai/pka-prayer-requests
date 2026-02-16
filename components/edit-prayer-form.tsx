@@ -153,6 +153,9 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                         <textarea
                           rows={5}
                           className="border-0 ring-0 focus:ring-0 outline-0"
+                          style={{
+                            scrollbarColor: `black transparent`,
+                          }}
                           id={field.name}
                           name={field.name}
                           value={field.state.value}

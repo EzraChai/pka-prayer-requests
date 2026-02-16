@@ -27,7 +27,7 @@ export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
   const deletePrayer = useMutation(api.myFunctions.deletePrayerById);
   return (
     <Card
-      className={`mb-12 w-full max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
+      className={`relative mb-12 w-full h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
@@ -64,45 +64,51 @@ export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
           </AlertDialog>
         </div>
       </div>
-      <CardHeader className="mt-2 text-2xl font-semibold">
-        {prayer.title}
-      </CardHeader>
-      <CardContent className="mb-4 text-neutral-800">
-        {prayer.content}
+      <CardContent
+        className="flex-1 px-0 mb-4 text-neutral-800 overflow-y-auto"
+        style={{
+          scrollbarColor: `black transparent`,
+        }}
+      >
+        <CardHeader className="mt-2 text-2xl font-semibold">
+          {prayer.title}
+        </CardHeader>
+        <p className="px-6">{prayer.content}</p>
+        {/* TODO add ESV */}
+        {prayer.bibleVerseCUVS && prayer.bibleVerseESV && (
+          <div
+            className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-neutral-100" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""} ${prayer.color === "green" ? "bg-lime-200" : ""}`}
+          >
+            <p className="italic font-semibold text-justify whitespace-pre-wrap">
+              {lang === "en"
+                ? prayer.bibleVerseESV.split("\n").map((line, i) => (
+                    <Fragment key={i}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))
+                : prayer.bibleVerseCUVS.split("\n").map((line, i) => (
+                    <Fragment key={i}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
+            </p>
+            <p className="mt-2 italic font-semibold">
+              {lang === "en"
+                ? BIBLE_BOOKS.find(
+                    (book) => book.abbr === prayer.bibleVerseRef?.split(" ")[0],
+                  )?.engName
+                : BIBLE_BOOKS.find(
+                    (book) => book.abbr === prayer.bibleVerseRef?.split(" ")[0],
+                  )?.chiName}
+              {` ${prayer.bibleVerseRef?.split(" ")[1]}`}
+            </p>
+          </div>
+        )}
       </CardContent>
-      {/* TODO add ESV */}
-      {prayer.bibleVerseCUVS && prayer.bibleVerseESV && (
-        <div
-          className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-neutral-100" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""} ${prayer.color === "green" ? "bg-lime-200" : ""}`}
-        >
-          <p className="italic font-semibold text-justify whitespace-pre-wrap">
-            {lang === "en"
-              ? prayer.bibleVerseESV.split("\n").map((line, i) => (
-                  <Fragment key={i}>
-                    {line}
-                    <br />
-                  </Fragment>
-                ))
-              : prayer.bibleVerseCUVS.split("\n").map((line, i) => (
-                  <Fragment key={i}>
-                    {line}
-                    <br />
-                  </Fragment>
-                ))}
-          </p>
-          <p className="mt-2 italic font-semibold">
-            {lang === "en"
-              ? BIBLE_BOOKS.find(
-                  (book) => book.abbr === prayer.bibleVerseRef?.split(" ")[0],
-                )?.engName
-              : BIBLE_BOOKS.find(
-                  (book) => book.abbr === prayer.bibleVerseRef?.split(" ")[0],
-                )?.chiName}
-            {` ${prayer.bibleVerseRef?.split(" ")[1]}`}
-          </p>
-        </div>
-      )}
-      <CardAction className="px-4 pb-2 flex w-full items-center justify-between">
+
+      <CardAction className=" px-4 pb-2 flex w-full items-center justify-between">
         <div className="bg-white px-2 font-semibold">
           {prayer.prayedCount} Prayed
         </div>
