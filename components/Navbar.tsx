@@ -21,31 +21,27 @@ export default function Navbar() {
           </PopoverTrigger>
           <PopoverContent className="p-12 fixed top-4 bg-yellow-300 shadow-none border-0 -left-7 w-screen h-screen rounded-none flex flex-col items-center gap-8 z-30">
             <Button
-              variant={"link"}
+              variant={"ghost"}
               onClick={() => {
                 router.push("/");
                 setIsOpen(false);
               }}
-              className={
-                pathname === "/"
-                  ? " bg-yellow-200 w-full underline-none"
-                  : "underline-none"
-              }
+              className={`
+                ${pathname === "/" && " bg-yellow-200 w-full"}
+                underline-none`}
             >
               <div className="text-4xl">Prayer Board</div>
             </Button>
 
             <Button
-              variant={"link"}
+              variant={"ghost"}
               onClick={() => {
                 router.push("/my-prayers");
                 setIsOpen(false);
               }}
-              className={
-                pathname === "/my-prayers"
-                  ? "bg-yellow-200  w-full underline-none"
-                  : "underline-none"
-              }
+              className={`
+                ${pathname === "/my-prayers" && " bg-yellow-200 w-full"}
+                underline-none`}
             >
               <div className="text-4xl">My Prayers</div>
             </Button>

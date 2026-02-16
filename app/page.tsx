@@ -46,9 +46,7 @@ export default function Home() {
   return (
     <main className="mt-24 p-4 md:p-12 flex flex-col ">
       <section>
-        <h1 className="text-4xl font-bold">
-          PKA <span>Prayer Care</span>
-        </h1>
+        <h1 className="text-4xl font-bold">PKA Prayer Care</h1>
         <p className="mt-2">
           Welcome to the PKA Prayer Care. Share your prayers and support others
           in their spiritual journey.
