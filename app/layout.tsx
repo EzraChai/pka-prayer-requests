@@ -28,12 +28,18 @@ export const metadata: Metadata = {
   openGraph: {
     title: "PKA Prayer Care",
     description:
-      "PKA Prayer Care provides a caring space to share your burdens and joys, offering prayer, encouragement, and spiritual support. We aim to bring hope, comfort, and God’s presence to everyone, reminding you that you are never alone.",
+      "PKA Prayer Care offers a compassionate space to share burdens and joys, providing prayer, encouragement, and spiritual support to bring hope, comfort, and God's presence to everyone.",
     url: "https://pkaprayercare.vercel.app",
-    images: ["https://pkaprayercare.vercel.app/og-image.png"],
+    images: [
+      {
+        url: "https://pkaprayercare.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   description:
-    "PKA Prayer Care provides a caring space to share your burdens and joys, offering prayer, encouragement, and spiritual support. We aim to bring hope, comfort, and God’s presence to everyone, reminding you that you are never alone.",
+    "PKA Prayer Care offers a compassionate space to share burdens and joys, providing prayer, encouragement, and spiritual support to bring hope, comfort, and God's presence to everyone.",
   keywords: [
     "prayer",
     "spiritual support",
