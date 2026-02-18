@@ -25,6 +25,13 @@ export const metadata: Metadata = {
     },
   ],
   manifest: "/site.webmanifest",
+  openGraph: {
+    title: "PKA Prayer Care",
+    description:
+      "PKA Prayer Care provides a caring space to share your burdens and joys, offering prayer, encouragement, and spiritual support. We aim to bring hope, comfort, and God’s presence to everyone, reminding you that you are never alone.",
+    url: "https://pkaprayercare.vercel.app",
+    images: ["https://pkaprayercare.vercel.app/og-image.png"],
+  },
   description:
     "PKA Prayer Care provides a caring space to share your burdens and joys, offering prayer, encouragement, and spiritual support. We aim to bring hope, comfort, and God’s presence to everyone, reminding you that you are never alone.",
   keywords: [
