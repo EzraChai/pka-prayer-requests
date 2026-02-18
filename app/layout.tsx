@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     "ministry",
   ],
   icons: {
-    icon: "/convex.svg",
+    icon: "/favicon.ico",
   },
 };
 
