@@ -24,6 +24,7 @@ export const metadata: Metadata = {
       url: "https://linktr.ee/pkausm",
     },
   ],
+  manifest: "/site.webmanifest",
   description:
     "PKA Prayer Care provides a caring space to share your burdens and joys, offering prayer, encouragement, and spiritual support. We aim to bring hope, comfort, and God’s presence to everyone, reminding you that you are never alone.",
   keywords: [
