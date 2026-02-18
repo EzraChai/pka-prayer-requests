@@ -9,7 +9,13 @@ import { useAction } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
 
-export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
+export default function PrayerCard({
+  prayer,
+  setUserId,
+}: {
+  prayer: PrayerWithStatus;
+  setUserId: (id: string) => void;
+}) {
   const addPrayerClick = useAction(api.myFunctions.addPrayerClick);
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
@@ -78,14 +84,17 @@ export default function PrayerCard({ prayer }: { prayer: PrayerWithStatus }) {
             if (!userId) {
               userId = crypto.randomUUID();
               localStorage.setItem("userId", userId);
+              setUserId(userId);
             }
 
-            spawnPrayParticles(e.clientX, e.clientY);
+            if (userId) {
+              spawnPrayParticles(e.clientX, e.clientY);
+              await addPrayerClick({
+                prayerId: prayer._id,
+                userId: userId,
+              });
+            }
 
-            await addPrayerClick({
-              prayerId: prayer._id,
-              userId: userId,
-            });
             setIsLoading(false);
           }}
         >

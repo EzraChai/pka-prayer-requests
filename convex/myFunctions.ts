@@ -48,6 +48,7 @@ export const addPrayerClick = action({
     let user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
       userId: args.userId,
     });
+    console.log(user);
     if (user === null) {
       await ctx.runMutation(internal.myFunctions.addUser, {
         userId: args.userId,
@@ -60,7 +61,7 @@ export const addPrayerClick = action({
       }
     }
 
-    await ctx.runMutation(internal.myFunctions.clickedPrayer, {
+    await ctx.runMutation(internal.myFunctions.clickPrayer, {
       prayerId: args.prayerId,
       userId: user._id,
     });
@@ -217,7 +218,7 @@ export const insertTokens = internalMutation({
   },
 });
 
-export const clickedPrayer = internalMutation({
+export const clickPrayer = internalMutation({
   args: {
     prayerId: v.id("prayers"),
     userId: v.id("users"),
@@ -276,7 +277,7 @@ export const getAllPrayersById = query({
       userId: args.userId,
     });
     if (!user) {
-      throw new Error("User not found");
+      return [];
     }
 
     return await ctx.db

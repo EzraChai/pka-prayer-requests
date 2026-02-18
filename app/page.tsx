@@ -13,10 +13,14 @@ import Link from "next/link";
 export default function Home() {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
-
-  const [userId] = useState(() => {
+  const [userId, setUserId] = useState(() => {
     if (typeof window === "undefined") return "";
-    return localStorage.getItem("userId") ?? "";
+    let user = localStorage.getItem("userId");
+    if (!user) {
+      user = crypto.randomUUID();
+      localStorage.setItem("userId", user);
+    }
+    return user;
   });
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
@@ -64,7 +68,11 @@ export default function Home() {
               {results && results.length > 0 ? (
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
                   {results.map((prayer) => (
-                    <PrayerCard key={prayer._id} prayer={prayer} />
+                    <PrayerCard
+                      key={prayer._id}
+                      prayer={prayer}
+                      setUserId={setUserId}
+                    />
                   ))}
                 </div>
               ) : (

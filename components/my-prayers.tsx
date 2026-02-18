@@ -7,12 +7,14 @@ import { useState } from "react";
 import { Loader } from "lucide-react";
 
 export default function MyPrayers() {
-  const [userId] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem("userId");
-    } catch {
-      return null;
+  const [userId] = useState(() => {
+    if (typeof window === "undefined") return "";
+    let user = localStorage.getItem("userId");
+    if (!user) {
+      user = crypto.randomUUID();
+      localStorage.setItem("userId", user);
     }
+    return user;
   });
 
   const prayers = useQuery(api.myFunctions.getAllPrayersById, {
