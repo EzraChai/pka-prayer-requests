@@ -23,6 +23,10 @@ export const metadata: Metadata = {
       name: "PKA Team",
       url: "https://linktr.ee/pkausm",
     },
+    {
+      name: "Ezra Chai",
+      url: "https://ezrachai-links.vercel.app",
+    },
   ],
   manifest: "/site.webmanifest",
   openGraph: {
