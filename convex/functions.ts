@@ -48,7 +48,6 @@ export const addPrayerClick = action({
     let user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
       userId: args.userId,
     });
-    console.log(user);
     if (user === null) {
       await ctx.runMutation(internal.myFunctions.addUser, {
         userId: args.userId,

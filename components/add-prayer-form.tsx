@@ -76,7 +76,6 @@ export function AddNewPrayerForm() {
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
         });
       } catch (error) {
-        console.error("Error submitting prayer request:", error);
         toast.error(
           (error as Error).message || "Failed to submit prayer request",
         );

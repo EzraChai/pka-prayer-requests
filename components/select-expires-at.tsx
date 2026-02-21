@@ -40,7 +40,7 @@ export default function SelectExpiresAt({
           mode="single"
           selected={value ?? undefined}
           onSelect={(date) => onChange(date ?? null)}
-          className="w-full "
+          className="w-full"
         />
       </PopoverContent>
     </Popover>

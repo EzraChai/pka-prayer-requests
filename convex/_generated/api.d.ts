@@ -8,7 +8,7 @@
  * @module
  */
 
-import type * as myFunctions from "../myFunctions.js";
+import type * as myFunctions from "../functions.js";
 
 import type {
   ApiFromModules,

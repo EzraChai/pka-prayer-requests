@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import moment from "moment";
 import { LanguageContext } from "./LanguageContextProvider";
 import { Fragment, use, useState } from "react";
-import { PrayerWithStatus } from "@/convex/myFunctions";
+import { PrayerWithStatus } from "@/convex/functions";
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
 import { Loader2 } from "lucide-react";
