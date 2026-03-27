@@ -57,7 +57,7 @@ export default function Home() {
         </p>
       </section>
 
-      <div className="md:min-h-140 w-full">
+      <div className="min-h-96 md:min-h-140 w-full">
         <div className="">
           {isLoading && status === "LoadingFirstPage" ? (
             <div className="mt-52 flex justify-center items-center ">
