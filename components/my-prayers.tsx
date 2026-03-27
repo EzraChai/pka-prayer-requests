@@ -17,7 +17,7 @@ export default function MyPrayers() {
     return user;
   });
 
-  const prayers = useQuery(api.myFunctions.getAllPrayersById, {
+  const prayers = useQuery(api.functions.getAllPrayersById, {
     userId: userId ?? "",
   });
 

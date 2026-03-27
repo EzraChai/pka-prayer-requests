@@ -44,7 +44,7 @@ const formSchema = z.object({
 });
 
 export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
-  const editPrayerRequest = useAction(api.myFunctions.checkAndAddPrayer);
+  const editPrayerRequest = useAction(api.functions.checkAndAddPrayer);
   const context = use(LanguageContext);
   const [open, setOpen] = useState(false);
   const lang = context?.lang ?? "en";

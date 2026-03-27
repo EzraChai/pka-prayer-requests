@@ -24,7 +24,7 @@ export default function Home() {
   });
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
-    api.myFunctions.getAllPrayers,
+    api.functions.getAllPrayers,
     {
       userId: userId ?? "",
     },

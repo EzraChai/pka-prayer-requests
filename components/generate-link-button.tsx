@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 
 export default function GenerateLinkButton() {
-  const generateLink = useAction(api.myFunctions.generateToken);
+  const generateLink = useAction(api.functions.generateToken);
   const [link, setLink] = useState("");
   const [open, setOpen] = useState(false);
 

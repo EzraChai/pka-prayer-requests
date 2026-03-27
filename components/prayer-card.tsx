@@ -16,7 +16,7 @@ export default function PrayerCard({
   prayer: PrayerWithStatus;
   setUserId: (id: string) => void;
 }) {
-  const addPrayerClick = useAction(api.myFunctions.addPrayerClick);
+  const addPrayerClick = useAction(api.functions.addPrayerClick);
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
   const [isLoading, setIsLoading] = useState(false);

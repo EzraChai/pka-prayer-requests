@@ -18,7 +18,7 @@ export default function LinkDevice({
   const [statusCode, setStatusCode] = useState("LINKING");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const verifyToken = useAction(api.myFunctions.verifyToken);
+  const verifyToken = useAction(api.functions.verifyToken);
 
   useEffect(() => {
     if (!params.token) {

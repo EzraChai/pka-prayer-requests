@@ -24,7 +24,7 @@ import { EditPrayerForm } from "./edit-prayer-form";
 export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
-  const deletePrayer = useMutation(api.myFunctions.deletePrayerById);
+  const deletePrayer = useMutation(api.functions.deletePrayerById);
   return (
     <Card
       className={`relative mb-12 w-full max-h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}

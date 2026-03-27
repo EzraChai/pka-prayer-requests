@@ -45,14 +45,14 @@ export const addPrayerClick = action({
     userId: v.string(),
   },
   handler: async (ctx, args) => {
-    let user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+    let user = await ctx.runQuery(internal.functions.getUserByUserId, {
       userId: args.userId,
     });
     if (user === null) {
-      await ctx.runMutation(internal.myFunctions.addUser, {
+      await ctx.runMutation(internal.functions.addUser, {
         userId: args.userId,
       });
-      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+      user = await ctx.runQuery(internal.functions.getUserByUserId, {
         userId: args.userId,
       });
       if (user === null) {
@@ -60,7 +60,7 @@ export const addPrayerClick = action({
       }
     }
 
-    await ctx.runMutation(internal.myFunctions.clickPrayer, {
+    await ctx.runMutation(internal.functions.clickPrayer, {
       prayerId: args.prayerId,
       userId: user._id,
     });
@@ -73,12 +73,12 @@ export const generateToken = action({
   },
   handler: async (ctx, args): Promise<string> => {
     // Generate a unique token for the user
-    let user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+    let user = await ctx.runQuery(internal.functions.getUserByUserId, {
       userId: args.userId,
     });
     if (user) {
       const link_tokens = await ctx.runQuery(
-        internal.myFunctions.getTokensByUserId,
+        internal.functions.getTokensByUserId,
         {
           userId: user._id,
         },
@@ -88,10 +88,10 @@ export const generateToken = action({
         return link_tokens[0].token;
       }
     } else {
-      await ctx.runMutation(internal.myFunctions.addUser, {
+      await ctx.runMutation(internal.functions.addUser, {
         userId: args.userId,
       });
-      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+      user = await ctx.runQuery(internal.functions.getUserByUserId, {
         userId: args.userId,
       });
     }
@@ -100,7 +100,7 @@ export const generateToken = action({
     }
 
     const token = await generateUrlSafeToken(user._id);
-    await ctx.runMutation(internal.myFunctions.insertTokens, {
+    await ctx.runMutation(internal.functions.insertTokens, {
       userId: user._id,
       token: token,
     });
@@ -114,7 +114,7 @@ export const verifyToken = action({
     token: v.string(),
   },
   handler: async (ctx, args): Promise<string> => {
-    const token = await ctx.runQuery(internal.myFunctions.getTokensByToken, {
+    const token = await ctx.runQuery(internal.functions.getTokensByToken, {
       token: args.token,
     });
     if (!token) {
@@ -124,7 +124,7 @@ export const verifyToken = action({
       });
     }
 
-    const user = await ctx.runQuery(internal.myFunctions.getUserById, {
+    const user = await ctx.runQuery(internal.functions.getUserById, {
       id: token.userId,
     });
     if (!user) {
@@ -141,7 +141,7 @@ export const verifyToken = action({
       });
     }
 
-    await ctx.runMutation(internal.myFunctions.setTokenUsed, {
+    await ctx.runMutation(internal.functions.setTokenUsed, {
       id: token._id,
     });
 
@@ -255,7 +255,7 @@ export const getAllPrayers = query({
     }
 
     return await ctx.runQuery(
-      internal.myFunctions.getAllPrayersAndPrayerClicked,
+      internal.functions.getAllPrayersAndPrayerClicked,
       {
         userId: user?._id ?? undefined,
         paginationOpts: args.paginationOpts,
@@ -272,7 +272,7 @@ export const getAllPrayersById = query({
     if (args.userId === "") {
       return [];
     }
-    const user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+    const user = await ctx.runQuery(internal.functions.getUserByUserId, {
       userId: args.userId,
     });
     if (!user) {
@@ -369,15 +369,15 @@ export const checkAndAddPrayer = action({
       createdAt: number;
     } | null = null;
 
-    user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+    user = await ctx.runQuery(internal.functions.getUserByUserId, {
       userId: args.userId,
     });
 
     if (!user) {
-      await ctx.runMutation(internal.myFunctions.addUser, {
+      await ctx.runMutation(internal.functions.addUser, {
         userId: args.userId,
       });
-      user = await ctx.runQuery(internal.myFunctions.getUserByUserId, {
+      user = await ctx.runQuery(internal.functions.getUserByUserId, {
         userId: args.userId,
       });
     }
@@ -471,7 +471,7 @@ export const checkAndAddPrayer = action({
       }
     }
 
-    await ctx.runMutation(internal.myFunctions.addPrayer, {
+    await ctx.runMutation(internal.functions.addPrayer, {
       id: args.id,
       prayedCount: args.prayedCount,
       content: args.content,
@@ -553,7 +553,7 @@ export const addPrayer = internalMutation({
         isPublic: args.isPublic,
       });
     }
-    ctx.scheduler.runAfter(0, api.myFunctions.sendToTelegram, {
+    ctx.scheduler.runAfter(0, api.functions.sendToTelegram, {
       message: `🙏 *New Prayer Request*
 
 📝 *${escapeTelegramMarkdown(args.title)}*
