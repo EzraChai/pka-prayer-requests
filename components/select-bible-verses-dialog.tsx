@@ -59,8 +59,7 @@ export default function SelectBibleVersesDialog({
 
   type Verse = {
     content: (
-      | string
-      | { lineBreak?: boolean; poem?: boolean; text?: string }
+      string | { lineBreak?: boolean; poem?: boolean; text?: string }
     )[];
     type: VerseType;
     number?: number;
@@ -308,7 +307,7 @@ export default function SelectBibleVersesDialog({
               </button>
               <button
                 onClick={() => setTestaments("NT")}
-                className={` ${testaments === "NT" && `${color === "yellow" || (color === "white" && "bg-yellow-300")} ${color === "cyan" && "bg-cyan-300"} ${color === "red" && "bg-red-300"}`} border border-black text-xs transition-all py-1 px-2`}
+                className={` ${testaments === "NT" && `${(color === "yellow" || color === "white") && "bg-yellow-300"} ${color === "cyan" && "bg-cyan-300"} ${color === "red" && "bg-red-300"}`} border border-black text-xs transition-all py-1 px-2`}
               >
                 {lang === "en" ? "New Testament" : "新约"}
               </button>

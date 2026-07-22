@@ -147,6 +147,7 @@ export function AddNewPrayerForm() {
                     return (
                       <Field data-invalid={isInvalid}>
                         <textarea
+                          style={{ minHeight: 80 }}
                           rows={5}
                           className="border-0 ring-0 focus:ring-0 outline-0"
                           id={field.name}
@@ -229,8 +230,7 @@ export function AddNewPrayerForm() {
                           value={field.state.value || ""}
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder="Name (Optional)"
-                          autoComplete="off"
+                          placeholder="Nickname (Optional)"
                         />
                       </Field>
                     )}

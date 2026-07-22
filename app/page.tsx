@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <main className="mt-24 p-4 md:p-12 flex flex-col ">
       <section>
-        <h1 className="text-4xl font-bold">PKA Prayer Care</h1>
+        <h1 className="text-4xl font-extrabold">PKA Prayer Care</h1>
         <p className="mt-2">
           Welcome to the PKA Prayer Care. Share your prayers and support others
           in their spiritual journey.
@@ -89,7 +89,7 @@ export default function Home() {
           )}
         </div>
       </div>
-      {typeof window !== "undefined" && lang === "en" ? (
+      {lang === "en" && (
         <div className="mt-12 text-xs text-neutral-500 text-center mb-24 md:mb-0 md:text-left">
           <p>
             ESV® Bible (The Holy Bible, English Standard Version®), <br />© 2001
@@ -102,9 +102,9 @@ export default function Home() {
             </Button>
           </Link>
         </div>
-      ) : (
-        <div className="mt-12"></div>
       )}
+      <div className="mt-12"></div>
+
       <div className="fixed bottom-4 md:bottom-16 right-4 md:right-12">
         <AddNewPrayerForm />
       </div>

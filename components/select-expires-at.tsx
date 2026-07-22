@@ -24,7 +24,7 @@ export default function SelectExpiresAt({
             ${color === "green" && "bg-lime-200 hover:bg-lime-300"}`}
         >
           {value ? (
-            new Date(value).toLocaleDateString()
+            new Date(value).toLocaleDateString("en-MY")
           ) : (
             <span className="text-neutral-500 text-xs">
               Expired At (Optional)
