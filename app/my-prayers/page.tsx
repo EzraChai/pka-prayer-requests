@@ -9,9 +9,6 @@ export default function MyPrayersPage() {
     <div className="mt-24 ">
       <Card className=" m-4 md:m-12 bg-lime-300 ">
         <div className="flex gap-12 px-2 md:px-12 py-2 md:py-6">
-          <button className="hidden text-justify md:flex px-4 md:w-24 md:h-24  justify-center items-center bg-white text-black border-3 border-black rotate-3  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 ease-out hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ">
-            <Edit className="md:w-24 md:h-24" />
-          </button>
           <div className="flex-1">
             <h3 className="text-xl md:text-3xl font-bold pb-2">
               Manage My Prayers
@@ -37,7 +34,7 @@ export default function MyPrayersPage() {
       </Card>
       <section className="mt-12 mb-12 px-4 md:px-12">
         <h2 className="text-2xl font-bold">My Prayers</h2>
-        <p className="text-lg">Here you can find all your written prayers.</p>
+        <p className="text-lg">You can find all your written prayers here.</p>
         <MyPrayers />
       </section>
       <div className="fixed bottom-4 md:bottom-16 right-4 md:right-12 md:hidden">
