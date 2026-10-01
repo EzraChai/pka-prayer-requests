@@ -243,7 +243,10 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                           name={field.name}
                           value={field.state.value || ""}
                           onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(e) =>
+                            field.handleChange(e.target.value.slice(0, 30))
+                          }
+                          maxLength={30}
                           placeholder="Name (Optional)"
                           autoComplete="off"
                         />

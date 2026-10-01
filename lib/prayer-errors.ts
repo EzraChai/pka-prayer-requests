@@ -2,7 +2,7 @@ export function getPrayerSubmissionErrorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : "";
 
   if (message.includes("Profanity detected")) {
-    return "Your prayer contains language that is not allowed. Please revise the title or prayer text.";
+    return "Your prayer contains language that is not allowed. Please revise the title, prayer text or username.";
   }
 
   if (message.includes("Profanity check failed")) {

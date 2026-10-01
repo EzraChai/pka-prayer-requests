@@ -34,8 +34,13 @@ export default function EditPrayerCard({ prayer }: { prayer: EditablePrayer }) {
       className={`relative mb-12 w-full max-h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
-        <div>
-          <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
+        <div className="min-w-0">
+          <p
+            className="max-w-[10rem] truncate"
+            title={prayer.username || "Anonymous"}
+          >
+            {prayer.username ? prayer.username : "Anonymous"}
+          </p>
           {prayer.cellGroup && (
             <p className="text-[10px] font-semibold uppercase">
               Cell group: {prayer.cellGroup.name}

@@ -395,6 +395,8 @@ export const checkAndAddPrayer = action({
   },
 
   handler: async (ctx, args): Promise<void> => {
+    const username = args.username.trim().slice(0, 30);
+
     if (args.cellGroupId) {
       const cellGroup = await ctx.runQuery(
         internal.functions.getCellGroupById,
@@ -409,7 +411,7 @@ export const checkAndAddPrayer = action({
       `Checking for profanity in prayer request: ${args.title.concat(" ", args.content)}`,
     );
     const isProfanity = await checkProfanity(
-      args.title.concat(" ", args.content),
+      args.title.concat(" ", args.content).concat(" ", username),
     );
 
     if (isProfanity === true) {
@@ -532,7 +534,7 @@ export const checkAndAddPrayer = action({
       bibleVerseCUVS: versesTextCUVS,
       bibleVerseESV: versesTextESV,
       bibleVerseRef: args.bibleVerses || "",
-      username: args.username,
+      username,
       expiresAt: args.expiresAt,
       createdBy: user._id,
       cellGroupId: args.cellGroupId,
@@ -696,5 +698,6 @@ async function checkProfanity(text: string): Promise<boolean> {
   }
 
   const data = await res.json();
-  return data.score > 0.8;
+  console.log("Profanity check response:", data);
+  return data.score > 0.85;
 }
