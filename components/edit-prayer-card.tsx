@@ -21,16 +21,32 @@ import {
 import { api } from "@/convex/_generated/api";
 import { EditPrayerForm } from "./edit-prayer-form";
 
-export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
+type EditablePrayer = Doc<"prayers"> & {
+  cellGroup?: Doc<"cell_groups"> | null;
+};
+
+export default function EditPrayerCard({ prayer }: { prayer: EditablePrayer }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
   const deletePrayer = useMutation(api.functions.deletePrayerById);
   return (
     <Card
-      className={`relative mb-12 w-full max-h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
+      className={`relative mb-12 h-fit w-full max-h-108 max-w-sm self-start break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
-        <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
+        <div className="min-w-0">
+          <p
+            className="max-w-[10rem] truncate"
+            title={prayer.username || "Anonymous"}
+          >
+            {prayer.username ? prayer.username : "Anonymous"}
+          </p>
+          {prayer.cellGroup && (
+            <p className="text-[10px] font-semibold uppercase">
+              Cell group: {prayer.cellGroup.name}
+            </p>
+          )}
+        </div>
         <div className="flex gap-2">
           <EditPrayerForm prayer={prayer} />
           <AlertDialog>
@@ -65,7 +81,7 @@ export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
         </div>
       </div>
       <CardContent
-        className="flex-1 px-0 mb-4 text-neutral-800 overflow-y-auto"
+        className="min-h-0 flex-1 px-0 mb-4 text-neutral-800 overflow-y-auto"
         style={{
           scrollbarColor: `black transparent`,
         }}
@@ -73,7 +89,7 @@ export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
         <CardHeader className="mt-2 text-2xl font-semibold">
           {prayer.title}
         </CardHeader>
-        <p className="px-6 mb-4 ">{prayer.content}</p>
+        <p className="px-6 mb-4 overflow-scroll max-h-72">{prayer.content}</p>
         {prayer.bibleVerseCUVS && prayer.bibleVerseESV && (
           <div
             className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-neutral-100" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""} ${prayer.color === "green" ? "bg-lime-200" : ""}`}

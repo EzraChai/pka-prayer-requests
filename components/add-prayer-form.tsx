@@ -23,12 +23,14 @@ import * as z from "zod";
 import SelectBibleVersesDialog from "./select-bible-verses-dialog";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
 import { LanguageContext } from "./LanguageContextProvider";
-import { use, useState } from "react";
+import { use, useRef, useState } from "react";
 import SelectExpiresAt from "./select-expires-at";
 import { Switch } from "./ui/switch";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Check, LoaderCircle } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
+import { getPrayerSubmissionErrorMessage } from "@/lib/prayer-errors";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -42,10 +44,19 @@ const formSchema = z.object({
   color: z.enum(["white", "yellow", "cyan", "red", "green"]),
 });
 
-export function AddNewPrayerForm() {
+export function AddNewPrayerForm({
+  cellGroupId,
+  cellGroupName,
+  cellGroupPassword,
+}: {
+  cellGroupId?: Id<"cell_groups">;
+  cellGroupName?: string;
+  cellGroupPassword?: string;
+}) {
   const addPrayerRequest = useAction(api.functions.checkAndAddPrayer);
   const context = use(LanguageContext);
   const [open, setOpen] = useState(false);
+  const submissionInFlight = useRef(false);
   const lang = context?.lang ?? "en";
 
   const form = useForm({
@@ -62,6 +73,11 @@ export function AddNewPrayerForm() {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
+      if (submissionInFlight.current) {
+        return;
+      }
+
+      submissionInFlight.current = true;
       try {
         let userId;
         userId = localStorage.getItem("userId");
@@ -72,14 +88,16 @@ export function AddNewPrayerForm() {
         await addPrayerRequest({
           ...value,
           userId: userId ?? "",
+          cellGroupId,
+          cellGroupPassword,
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
         });
       } catch (error) {
-        toast.error(
-          (error as Error).message || "Failed to submit prayer request",
-        );
+        toast.error(getPrayerSubmissionErrorMessage(error));
         return;
+      } finally {
+        submissionInFlight.current = false;
       }
 
       toast.success("Prayer request submitted successfully");
@@ -91,14 +109,16 @@ export function AddNewPrayerForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className=" text-3xl bg-neutral-800 border-3 font-black p-8">
-          + Prayer
+        <Button className="h-14 rounded-none border-3 bg-neutral-800 px-5 text-lg font-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:h-16 sm:px-7 sm:text-2xl">
+          <span className="sm:hidden">+</span>
+          <span className="hidden sm:inline">+ </span>
+          Prayer
         </Button>
       </DialogTrigger>
       <form.Subscribe selector={(state) => state.values.color}>
         {(color) => (
           <DialogContent
-            className={`w-2xl 
+            className={`max-h-[calc(100dvh-2rem)] overflow-y-auto w-[calc(100%-1rem)] p-4 sm:w-2xl sm:max-h-[calc(100dvh-4rem)] sm:p-6
               ${color === "yellow" && "bg-yellow-200"}
               ${color === "white" && "bg-white"}
               ${color === "cyan" && "bg-cyan-200"}
@@ -106,7 +126,10 @@ export function AddNewPrayerForm() {
               ${color === "green" && "bg-lime-200"}`}
           >
             <DialogHeader>
-              <DialogTitle>New Prayer Request</DialogTitle>
+              <DialogTitle>
+                New Prayer Request
+                {cellGroupName ? ` · ${cellGroupName}` : ""}
+              </DialogTitle>
             </DialogHeader>
             <form
               id="prayer-request-form"
@@ -219,7 +242,7 @@ export function AddNewPrayerForm() {
                     </Field>
                   )}
                 </form.Field>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                   <form.Field name="username">
                     {(field) => (
                       <Field>
@@ -229,7 +252,10 @@ export function AddNewPrayerForm() {
                           name={field.name}
                           value={field.state.value || ""}
                           onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(e) =>
+                            field.handleChange(e.target.value.slice(0, 30))
+                          }
+                          maxLength={30}
                           placeholder="Nickname (Optional)"
                         />
                       </Field>
@@ -338,7 +364,7 @@ export function AddNewPrayerForm() {
               <Button
                 disabled={form.state.isSubmitting}
                 type="submit"
-                className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} ${color === "green" && "bg-lime-300 hover:bg-lime-300"} text-neutral-800 border-2`}
+                className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} ${color === "green" && "bg-lime-300 hover:bg-lime-300"} text-black border-2`}
                 form="prayer-request-form"
               >
                 {form.state.isSubmitting ? (

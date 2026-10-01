@@ -23,13 +23,14 @@ import * as z from "zod";
 import SelectBibleVersesDialog from "./select-bible-verses-dialog";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
 import { LanguageContext } from "./LanguageContextProvider";
-import { use, useState } from "react";
+import { use, useRef, useState } from "react";
 import SelectExpiresAt from "./select-expires-at";
 import { Switch } from "./ui/switch";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Check, Edit, LoaderCircle } from "lucide-react";
 import { Doc } from "@/convex/_generated/dataModel";
+import { getPrayerSubmissionErrorMessage } from "@/lib/prayer-errors";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -47,6 +48,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
   const editPrayerRequest = useAction(api.functions.checkAndAddPrayer);
   const context = use(LanguageContext);
   const [open, setOpen] = useState(false);
+  const submissionInFlight = useRef(false);
   const lang = context?.lang ?? "en";
 
   const form = useForm({
@@ -63,6 +65,11 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
+      if (submissionInFlight.current) {
+        return;
+      }
+
+      submissionInFlight.current = true;
       try {
         let userId;
         userId = localStorage.getItem("userId");
@@ -74,16 +81,17 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
           ...value,
           id: prayer._id,
           userId: userId ?? "",
+          cellGroupId: prayer.cellGroupId,
           username: value.username ?? "",
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
           prayedCount: prayer.prayedCount,
         });
       } catch (error) {
-        toast.error(
-          (error as Error).message || "Failed to submit prayer request",
-        );
+        toast.error(getPrayerSubmissionErrorMessage(error));
         return;
+      } finally {
+        submissionInFlight.current = false;
       }
 
       toast.success("Prayer request submitted successfully");
@@ -235,7 +243,10 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                           name={field.name}
                           value={field.state.value || ""}
                           onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(e) =>
+                            field.handleChange(e.target.value.slice(0, 30))
+                          }
+                          maxLength={30}
                           placeholder="Name (Optional)"
                           autoComplete="off"
                         />
