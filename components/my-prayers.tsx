@@ -43,7 +43,7 @@ export default function MyPrayers() {
         {mainPrayers.length > 0 && (
           <section>
             <h3 className="text-xl font-bold">Main prayer board</h3>
-            <div className="min-h-32 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 py-4">
+            <div className="min-h-32 mt-4 columns-1 gap-12 md:columns-2 lg:columns-3 xl:columns-4 py-4">
               {mainPrayers.map((prayer) => (
                 <PrayerEditCard prayer={prayer} key={prayer._id} />
               ))}
@@ -57,7 +57,7 @@ export default function MyPrayers() {
               These prayers were written on a cell-group board, not the main
               prayer board.
             </p>
-            <div className="min-h-32 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 py-4">
+            <div className="min-h-32 mt-4 columns-1 gap-12 md:columns-2 lg:columns-3 xl:columns-4 py-4">
               {cellGroupPrayers.map((prayer) => (
                 <PrayerEditCard prayer={prayer} key={prayer._id} />
               ))}

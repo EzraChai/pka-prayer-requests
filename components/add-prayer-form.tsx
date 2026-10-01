@@ -47,9 +47,11 @@ const formSchema = z.object({
 export function AddNewPrayerForm({
   cellGroupId,
   cellGroupName,
+  cellGroupPassword,
 }: {
   cellGroupId?: Id<"cell_groups">;
   cellGroupName?: string;
+  cellGroupPassword?: string;
 }) {
   const addPrayerRequest = useAction(api.functions.checkAndAddPrayer);
   const context = use(LanguageContext);
@@ -87,6 +89,7 @@ export function AddNewPrayerForm({
           ...value,
           userId: userId ?? "",
           cellGroupId,
+          cellGroupPassword,
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
         });

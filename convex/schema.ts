@@ -9,6 +9,7 @@ export default defineSchema({
   cell_groups: defineTable({
     name: v.string(),
     slug: v.string(),
+    password: v.string(),
     createdAt: v.number(),
   }).index("by_slug", ["slug"]),
 

@@ -242,12 +242,35 @@ export type PrayerWithStatus = Doc<"prayers"> & { prayed: boolean };
 export const getCellGroupBySlug = query({
   args: {
     slug: v.string(),
+    password: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const cellGroup = await ctx.db
       .query("cell_groups")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .first();
+
+    if (!cellGroup) {
+      return null;
+    }
+
+    if (args.password !== cellGroup.password) {
+      return {
+        _id: cellGroup._id,
+        name: cellGroup.name,
+        slug: cellGroup.slug,
+        requiresPassword: true,
+        invalidPassword: args.password !== undefined,
+      };
+    }
+
+    return {
+      _id: cellGroup._id,
+      name: cellGroup.name,
+      slug: cellGroup.slug,
+      requiresPassword: false,
+      invalidPassword: false,
+    };
   },
 });
 
@@ -255,9 +278,17 @@ export const getAllPrayers = query({
   args: {
     userId: v.string(),
     cellGroupId: v.optional(v.id("cell_groups")),
+    cellGroupPassword: v.optional(v.string()),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args): Promise<PaginationResult<PrayerWithStatus>> => {
+    if (args.cellGroupId) {
+      const cellGroup = await ctx.db.get(args.cellGroupId);
+      if (!cellGroup || cellGroup.password !== args.cellGroupPassword) {
+        throw new Error("Invalid cell-group password.");
+      }
+    }
+
     let user: Doc<"users"> | null = null;
 
     if (args.userId !== "") {
@@ -384,6 +415,7 @@ export const checkAndAddPrayer = action({
     username: v.string(),
     userId: v.string(),
     cellGroupId: v.optional(v.id("cell_groups")),
+    cellGroupPassword: v.optional(v.string()),
     isPublic: v.boolean(),
     color: v.union(
       v.literal("white"),
@@ -397,13 +429,13 @@ export const checkAndAddPrayer = action({
   handler: async (ctx, args): Promise<void> => {
     const username = args.username.trim().slice(0, 30);
 
-    if (args.cellGroupId) {
+    if (args.cellGroupId && !args.id) {
       const cellGroup = await ctx.runQuery(
         internal.functions.getCellGroupById,
         { id: args.cellGroupId },
       );
-      if (!cellGroup) {
-        throw new Error("Cell group not found.");
+      if (!cellGroup || cellGroup.password !== args.cellGroupPassword) {
+        throw new Error("Invalid cell-group password.");
       }
     }
 
@@ -687,14 +719,8 @@ async function checkProfanity(text: string): Promise<boolean> {
   // exactly-35-word messages at its boundary.
   const maxWordsPerRequest = 34;
 
-  for (
-    let start = 0;
-    start < words.length;
-    start += maxWordsPerRequest
-  ) {
-    const message = words
-      .slice(start, start + maxWordsPerRequest)
-      .join(" ");
+  for (let start = 0; start < words.length; start += maxWordsPerRequest) {
+    const message = words.slice(start, start + maxWordsPerRequest).join(" ");
     const res = await fetch("https://vector.profanity.dev", {
       method: "POST",
       headers: {

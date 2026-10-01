@@ -21,8 +21,9 @@ npm run dev
 ## Cell-group prayer boards
 
 Cell groups are managed manually in the Convex dashboard. Add a document to the
-`cell_groups` table with a display `name`, a unique lowercase `slug`, and a
-`createdAt` timestamp. The group's board is then available at:
+`cell_groups` table with a display `name`, a unique lowercase `slug`, a
+four-digit `password`, and a `createdAt` timestamp. The group's board is then
+available at:
 
 ```
 /cg/<slug>

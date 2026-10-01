@@ -31,7 +31,7 @@ export default function EditPrayerCard({ prayer }: { prayer: EditablePrayer }) {
   const deletePrayer = useMutation(api.functions.deletePrayerById);
   return (
     <Card
-      className={`relative mb-12 w-full max-h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
+      className={`relative mb-12 h-fit w-full max-h-108 max-w-sm self-start break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <div className="min-w-0">
@@ -81,7 +81,7 @@ export default function EditPrayerCard({ prayer }: { prayer: EditablePrayer }) {
         </div>
       </div>
       <CardContent
-        className="flex-1 px-0 mb-4 text-neutral-800 overflow-y-auto"
+        className="min-h-0 flex-1 px-0 mb-4 text-neutral-800 overflow-y-auto"
         style={{
           scrollbarColor: `black transparent`,
         }}

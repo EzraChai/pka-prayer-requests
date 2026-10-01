@@ -14,9 +14,11 @@ import Link from "next/link";
 export default function PrayerBoard({
   cellGroupId,
   cellGroupName,
+  cellGroupPassword,
 }: {
   cellGroupId?: Id<"cell_groups">;
   cellGroupName?: string;
+  cellGroupPassword?: string;
 }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
@@ -35,6 +37,7 @@ export default function PrayerBoard({
     {
       userId,
       ...(cellGroupId ? { cellGroupId } : {}),
+      ...(cellGroupPassword ? { cellGroupPassword } : {}),
     },
     { initialNumItems: 12 },
   );
@@ -76,7 +79,7 @@ export default function PrayerBoard({
         ) : (
           <div>
             {results && results.length > 0 ? (
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
+              <div className="mt-8 columns-1 gap-12 md:columns-2 lg:columns-3 xl:columns-4">
                 {results.map((prayer) => (
                   <PrayerCard
                     key={prayer._id}
@@ -118,6 +121,7 @@ export default function PrayerBoard({
         <AddNewPrayerForm
           cellGroupId={cellGroupId}
           cellGroupName={cellGroupName}
+          cellGroupPassword={cellGroupPassword}
         />
       </div>
     </main>
