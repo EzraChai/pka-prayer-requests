@@ -572,6 +572,8 @@ _${escapeTelegramMarkdown(args.bibleVerseCUVS)}_
     `
 }
 
+[Open PKA Prayer Care](https://pkaprayercare.vercel.app/)
+
 👤 Submitted by ${args.username ? escapeTelegramMarkdown(args.username) : "Anonymous"}`,
     });
   },
