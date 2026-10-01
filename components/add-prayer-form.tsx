@@ -23,7 +23,7 @@ import * as z from "zod";
 import SelectBibleVersesDialog from "./select-bible-verses-dialog";
 import { BIBLE_BOOKS } from "@/lib/bible-data";
 import { LanguageContext } from "./LanguageContextProvider";
-import { use, useState } from "react";
+import { use, useRef, useState } from "react";
 import SelectExpiresAt from "./select-expires-at";
 import { Switch } from "./ui/switch";
 import { useAction } from "convex/react";
@@ -54,6 +54,7 @@ export function AddNewPrayerForm({
   const addPrayerRequest = useAction(api.functions.checkAndAddPrayer);
   const context = use(LanguageContext);
   const [open, setOpen] = useState(false);
+  const submissionInFlight = useRef(false);
   const lang = context?.lang ?? "en";
 
   const form = useForm({
@@ -70,6 +71,11 @@ export function AddNewPrayerForm({
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
+      if (submissionInFlight.current) {
+        return;
+      }
+
+      submissionInFlight.current = true;
       try {
         let userId;
         userId = localStorage.getItem("userId");
@@ -87,6 +93,8 @@ export function AddNewPrayerForm({
       } catch (error) {
         toast.error(getPrayerSubmissionErrorMessage(error));
         return;
+      } finally {
+        submissionInFlight.current = false;
       }
 
       toast.success("Prayer request submitted successfully");
