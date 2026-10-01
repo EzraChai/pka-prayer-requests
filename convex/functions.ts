@@ -686,12 +686,13 @@ async function checkProfanity(text: string): Promise<boolean> {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text: text }),
+    body: JSON.stringify({ message: text }),
   });
 
-  const data = await res.json();
-  if (data.isProfanity) {
-    return true;
+  if (!res.ok) {
+    throw new Error(`Profanity check failed with status ${res.status}.`);
   }
-  return false;
+
+  const data = await res.json();
+  return data.isProfanity === true;
 }
