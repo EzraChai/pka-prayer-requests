@@ -5,7 +5,7 @@ import PrayerCard from "@/components/prayer-card";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { usePaginatedQuery } from "convex/react";
-import { Loader } from "lucide-react";
+import { BookHeart, Loader } from "lucide-react";
 import { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AddNewPrayerForm } from "@/components/add-prayer-form";
@@ -59,27 +59,52 @@ export default function PrayerBoard({
   }, [loadMore, status]);
 
   return (
-    <main className="mt-24 p-4 md:p-12 flex flex-col">
-      <section>
-        <h1 className="text-4xl font-extrabold">
-          {cellGroupName ? `${cellGroupName} Prayer Board` : "PKA Prayer Care"}
-        </h1>
-        <p className="mt-2">
+    <main className="relative min-h-screen overflow-hidden bg-yellow-50 px-4 pb-32 pt-32 sm:px-6 sm:pt-36 md:px-12 md:pb-40 md:pt-36">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-28 top-44 h-48 w-48 rotate-12 border-3 border-black bg-yellow-300 sm:h-56 sm:w-56 md:-right-24 md:top-36 md:h-64 md:w-64"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-24 -left-24 h-56 w-56 -rotate-12 border-3 border-black bg-red-500 md:-bottom-32 md:h-72 md:w-72"
+      />
+
+      <section className="relative mx-auto w-full max-w-7xl">
+        <div className="flex max-w-3xl items-start gap-3 sm:gap-4">
+          <div
+            aria-hidden="true"
+            className="mt-1 flex size-10 shrink-0 -rotate-6 items-center justify-center border-3 border-black bg-lime-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:size-12"
+          >
+            <BookHeart className="size-6" strokeWidth={2.5} />
+          </div>
+          <div>
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.2em]">
+              {cellGroupName ? "Private circle" : "A place to pray"}
+            </p>
+            <h1 className="mt-2 break-words text-4xl font-black leading-[0.92] tracking-[-0.04em] sm:text-5xl md:text-6xl">
+              {cellGroupName ? `${cellGroupName} Prayer Board` : "PKA Prayer Care"}
+            </h1>
+          </div>
+        </div>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-black/70 sm:mt-6 sm:text-lg">
           {cellGroupName
             ? `Share prayers with the ${cellGroupName} cell group.`
-            : "Welcome to the PKA Prayer Care. Share your prayers and support others in their spiritual journey."}
+            : "Share your prayers and support others in their spiritual journey."}
         </p>
       </section>
 
-      <div className="min-h-96 md:min-h-140 w-full">
+      <div className="relative mx-auto min-h-96 w-full max-w-7xl md:min-h-140">
         {isLoading && status === "LoadingFirstPage" ? (
-          <div className="mt-52 flex justify-center items-center">
-            <Loader className="animate-spin" />
+          <div className="mt-32 flex flex-col items-center justify-center gap-3 text-center md:mt-44">
+            <Loader className="size-8 animate-spin" />
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.16em]">
+              Gathering prayers
+            </p>
           </div>
         ) : (
           <div>
             {results && results.length > 0 ? (
-              <div className="mt-8 columns-1 gap-12 md:columns-2 lg:columns-3 xl:columns-4">
+              <div className="mt-8 columns-1 gap-5 sm:mt-10 sm:columns-2 sm:gap-6 lg:columns-3 xl:columns-4">
                 {results.map((prayer) => (
                   <PrayerCard
                     key={prayer._id}
@@ -89,12 +114,16 @@ export default function PrayerBoard({
                 ))}
               </div>
             ) : (
-              <div className="mt-52 flex justify-center items-center text-neutral-500">
-                Add your prayer now!
+              <div className="mx-auto mt-28 max-w-md border-3 border-black bg-white p-8 text-center shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] md:mt-36">
+                <p className="text-2xl font-black">The board is quiet.</p>
+                <p className="mt-3 leading-6 text-black/65">
+                  Be the first to share a prayer and make space for someone
+                  else to say amen.
+                </p>
               </div>
             )}
             {status === "LoadingMore" && (
-              <div className="my-4 flex justify-center">
+              <div className="my-8 flex justify-center">
                 <Loader className="animate-spin" />
               </div>
             )}
@@ -102,7 +131,7 @@ export default function PrayerBoard({
         )}
       </div>
       {lang === "en" && (
-        <div className="mt-12 text-xs text-neutral-500 text-center mb-24 md:mb-0 md:text-left">
+        <div className="relative mx-auto mt-16 w-full max-w-7xl text-center text-xs text-neutral-500 md:text-left">
           <p>
             ESV® Bible (The Holy Bible, English Standard Version®), <br />©
             2001 by Crossway, a publishing ministry of Good News Publishers.{" "}
@@ -117,7 +146,7 @@ export default function PrayerBoard({
         </div>
       )}
 
-      <div className="fixed bottom-4 md:bottom-16 right-4 md:right-12">
+      <div className="fixed bottom-5 right-5 z-20 md:bottom-10 md:right-10">
         <AddNewPrayerForm
           cellGroupId={cellGroupId}
           cellGroupName={cellGroupName}

@@ -109,14 +109,16 @@ export function AddNewPrayerForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className=" text-3xl bg-neutral-800 border-3 font-black p-8">
-          + Prayer
+        <Button className="h-14 rounded-none border-3 bg-neutral-800 px-5 text-lg font-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:h-16 sm:px-7 sm:text-2xl">
+          <span className="sm:hidden">+</span>
+          <span className="hidden sm:inline">+ </span>
+          Prayer
         </Button>
       </DialogTrigger>
       <form.Subscribe selector={(state) => state.values.color}>
         {(color) => (
           <DialogContent
-            className={`w-2xl 
+            className={`max-h-[calc(100dvh-2rem)] overflow-y-auto w-[calc(100%-1rem)] p-4 sm:w-2xl sm:max-h-[calc(100dvh-4rem)] sm:p-6
               ${color === "yellow" && "bg-yellow-200"}
               ${color === "white" && "bg-white"}
               ${color === "cyan" && "bg-cyan-200"}
@@ -240,7 +242,7 @@ export function AddNewPrayerForm({
                     </Field>
                   )}
                 </form.Field>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                   <form.Field name="username">
                     {(field) => (
                       <Field>

@@ -22,7 +22,7 @@ export default function PrayerCard({
   const [isLoading, setIsLoading] = useState(false);
   return (
     <Card
-      className={`relative mb-8 h-fit w-full max-h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
+      className={`relative mb-6 h-fit w-full max-h-[27rem] break-inside-avoid sm:mb-8 ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
         <p
@@ -42,7 +42,7 @@ export default function PrayerCard({
           scrollbarColor: `black transparent`,
         }}
       >
-        <CardHeader className="mt-2 text-2xl font-semibold">
+        <CardHeader className="mt-2 text-xl font-semibold sm:text-2xl">
           {prayer.title}
         </CardHeader>
         <p className="px-6">{prayer.content}</p>

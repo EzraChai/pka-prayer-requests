@@ -49,7 +49,7 @@ export default function CellGroupPage({ slug }: { slug: string }) {
 
   if (cellGroup.requiresPassword) {
     return (
-      <main className="relative mt-24 flex min-h-[calc(100vh-6rem)] items-start justify-center overflow-hidden bg-yellow-50 px-4 py-12 md:items-center">
+      <main className="relative flex min-h-screen items-start justify-center overflow-hidden bg-yellow-50 px-4 pb-12 pt-32 md:items-center md:pb-16 md:pt-36">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-20 top-20 h-48 w-48 rotate-12 border-3 border-black bg-red-500 md:h-64 md:w-64"
