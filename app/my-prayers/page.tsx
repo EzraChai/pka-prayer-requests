@@ -1,8 +1,8 @@
 import { AddNewPrayerForm } from "@/components/add-prayer-form";
+import DisconnectDeviceButton from "@/components/disconnect-device-button";
 import GenerateLinkButton from "@/components/generate-link-button";
 import MyPrayers from "@/components/my-prayers";
 import { Card } from "@/components/ui/card";
-import { Edit } from "lucide-react";
 
 export default function MyPrayersPage() {
   return (
@@ -23,13 +23,26 @@ export default function MyPrayersPage() {
               own unique link.
             </p>
           </div>
-          <div className="hidden md:flex flex-col gap-6">
+          <div className="hidden md:flex md:w-72 flex-col gap-6">
             <AddNewPrayerForm />
             <GenerateLinkButton />
+            <div className="mt-2 border-t-2 border-black/30 pt-4">
+              <p className="mb-2 text-sm font-bold uppercase tracking-wide">
+                Device access
+              </p>
+              <DisconnectDeviceButton />
+            </div>
           </div>
         </div>
-        <div className="p-2 flex gap-6 md:hidden">
+
+        <div className="flex flex-col gap-5 p-2 md:hidden">
           <GenerateLinkButton />
+          <div className="border-t-2 border-black/30 pt-4">
+            <p className="mb-2 text-sm font-bold uppercase tracking-wide">
+              Device access
+            </p>
+            <DisconnectDeviceButton />
+          </div>
         </div>
       </Card>
       <section className="mt-12 mb-12 px-4 md:px-12">

@@ -73,8 +73,7 @@ export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
         <CardHeader className="mt-2 text-2xl font-semibold">
           {prayer.title}
         </CardHeader>
-        <p className="px-6">{prayer.content}</p>
-        {/* TODO add ESV */}
+        <p className="px-6 mb-4 ">{prayer.content}</p>
         {prayer.bibleVerseCUVS && prayer.bibleVerseESV && (
           <div
             className={`border-black border-y-3 p-4 ${prayer.color === "yellow" ? "bg-yellow-200" : ""} ${prayer.color === "white" ? "bg-neutral-100" : ""} ${prayer.color === "cyan" ? "bg-cyan-200" : ""} ${prayer.color === "red" ? "bg-red-200" : ""} ${prayer.color === "green" ? "bg-lime-200" : ""}`}
