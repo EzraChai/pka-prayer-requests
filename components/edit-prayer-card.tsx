@@ -21,7 +21,11 @@ import {
 import { api } from "@/convex/_generated/api";
 import { EditPrayerForm } from "./edit-prayer-form";
 
-export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
+type EditablePrayer = Doc<"prayers"> & {
+  cellGroup?: Doc<"cell_groups"> | null;
+};
+
+export default function EditPrayerCard({ prayer }: { prayer: EditablePrayer }) {
   const context = use(LanguageContext);
   const lang = context?.lang ?? "en";
   const deletePrayer = useMutation(api.functions.deletePrayerById);
@@ -30,7 +34,14 @@ export default function EditPrayerCard({ prayer }: { prayer: Doc<"prayers"> }) {
       className={`relative mb-12 w-full max-h-108 max-w-sm break-inside-avoid ${prayer.color === "yellow" ? "bg-yellow-300" : ""} ${prayer.color === "white" ? "bg-white" : ""} ${prayer.color === "cyan" ? "bg-cyan-300" : ""} ${prayer.color === "red" ? "bg-red-300" : ""} ${prayer.color === "green" ? "bg-lime-300" : ""}`}
     >
       <div className="px-6 text-xs text-neutral-700 flex justify-between">
-        <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
+        <div>
+          <p className="">{prayer.username ? prayer.username : "Anonymous"}</p>
+          {prayer.cellGroup && (
+            <p className="text-[10px] font-semibold uppercase">
+              Cell group: {prayer.cellGroup.name}
+            </p>
+          )}
+        </div>
         <div className="flex gap-2">
           <EditPrayerForm prayer={prayer} />
           <AlertDialog>

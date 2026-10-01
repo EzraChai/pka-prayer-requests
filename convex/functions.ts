@@ -239,9 +239,22 @@ export const clickPrayer = internalMutation({
 
 export type PrayerWithStatus = Doc<"prayers"> & { prayed: boolean };
 
+export const getCellGroupBySlug = query({
+  args: {
+    slug: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("cell_groups")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .first();
+  },
+});
+
 export const getAllPrayers = query({
   args: {
     userId: v.string(),
+    cellGroupId: v.optional(v.id("cell_groups")),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args): Promise<PaginationResult<PrayerWithStatus>> => {
@@ -258,6 +271,7 @@ export const getAllPrayers = query({
       internal.functions.getAllPrayersAndPrayerClicked,
       {
         userId: user?._id ?? undefined,
+        cellGroupId: args.cellGroupId,
         paginationOpts: args.paginationOpts,
       },
     );
@@ -268,7 +282,10 @@ export const getAllPrayersById = query({
   args: {
     userId: v.string(),
   },
-  handler: async (ctx, args): Promise<Doc<"prayers">[]> => {
+  handler: async (
+    ctx,
+    args,
+  ): Promise<(Doc<"prayers"> & { cellGroup: Doc<"cell_groups"> | null })[]> => {
     if (args.userId === "") {
       return [];
     }
@@ -279,11 +296,21 @@ export const getAllPrayersById = query({
       return [];
     }
 
-    return await ctx.db
+    const prayers = await ctx.db
       .query("prayers")
       .withIndex("by_createdBy", (q) => q.eq("createdBy", user._id))
       .order("desc")
       .collect();
+
+    const groups = await ctx.db.query("cell_groups").collect();
+    const groupsById = new Map(groups.map((group) => [group._id, group]));
+
+    return prayers.map((prayer) => ({
+      ...prayer,
+      cellGroup: prayer.cellGroupId
+        ? (groupsById.get(prayer.cellGroupId) ?? null)
+        : null,
+    }));
   },
 });
 
@@ -299,14 +326,25 @@ export const deletePrayerById = mutation({
 export const getAllPrayersAndPrayerClicked = internalQuery({
   args: {
     userId: v.optional(v.id("users")),
+    cellGroupId: v.optional(v.id("cell_groups")),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    const prayers = await ctx.db
-      .query("prayers")
-      .withIndex("by_createdAtAndIsPublic", (q) => q.eq("isPublic", true))
-      .order("desc")
-      .paginate(args.paginationOpts);
+    const prayersQuery = args.cellGroupId
+      ? ctx.db
+          .query("prayers")
+          .withIndex("by_cellGroup", (q) =>
+            q.eq("cellGroupId", args.cellGroupId),
+          )
+          .filter((q) => q.eq(q.field("isPublic"), true))
+          .order("desc")
+      : ctx.db
+          .query("prayers")
+          .withIndex("by_createdAtAndIsPublic", (q) => q.eq("isPublic", true))
+          .filter((q) => q.eq(q.field("cellGroupId"), undefined))
+          .order("desc");
+
+    const prayers = await prayersQuery.paginate(args.paginationOpts);
 
     if (args.userId !== undefined) {
       const userPrays = await ctx.db
@@ -345,6 +383,7 @@ export const checkAndAddPrayer = action({
     expiresAt: v.optional(v.number()),
     username: v.string(),
     userId: v.string(),
+    cellGroupId: v.optional(v.id("cell_groups")),
     isPublic: v.boolean(),
     color: v.union(
       v.literal("white"),
@@ -356,10 +395,22 @@ export const checkAndAddPrayer = action({
   },
 
   handler: async (ctx, args): Promise<void> => {
+    if (args.cellGroupId) {
+      const cellGroup = await ctx.runQuery(
+        internal.functions.getCellGroupById,
+        { id: args.cellGroupId },
+      );
+      if (!cellGroup) {
+        throw new Error("Cell group not found.");
+      }
+    }
+
     const isProfanity = await checkProfanity(
       args.title.concat(" ", args.content),
     );
-    if (isProfanity) {
+    console.log("Profanity check result:", isProfanity);
+
+    if (isProfanity === true) {
       throw new Error("Profanity detected in prayer request.");
     }
     let user: {
@@ -482,9 +533,19 @@ export const checkAndAddPrayer = action({
       username: args.username,
       expiresAt: args.expiresAt,
       createdBy: user._id,
+      cellGroupId: args.cellGroupId,
       color: args.color,
       isPublic: args.isPublic,
     });
+  },
+});
+
+export const getCellGroupById = internalQuery({
+  args: {
+    id: v.id("cell_groups"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
   },
 });
 
@@ -512,6 +573,7 @@ export const addPrayer = internalMutation({
     expiresAt: v.optional(v.number()),
     username: v.optional(v.string()),
     createdBy: v.id("users"),
+    cellGroupId: v.optional(v.id("cell_groups")),
     color: v.union(
       v.literal("white"),
       v.literal("yellow"),
@@ -536,6 +598,7 @@ export const addPrayer = internalMutation({
         expiresAt: args.expiresAt,
         username: args.username,
         isPublic: args.isPublic,
+        cellGroupId: args.cellGroupId,
       });
     } else {
       await ctx.db.insert("prayers", {
@@ -551,6 +614,7 @@ export const addPrayer = internalMutation({
         expiresAt: args.expiresAt,
         username: args.username,
         isPublic: args.isPublic,
+        cellGroupId: args.cellGroupId,
       });
     }
     ctx.scheduler.runAfter(0, api.functions.sendToTelegram, {
@@ -596,22 +660,23 @@ export const sendToTelegram = action({
     message: v.string(),
   },
   handler: async (_, args) => {
-    const res = await fetch(
-      `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: "-1003777112746",
-          text: args.message,
-          parse_mode: "MarkdownV2",
-        }),
-      },
-    );
+    return;
+    // const res = await fetch(
+    //   `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`,
+    //   {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       chat_id: "-1003777112746",
+    //       text: args.message,
+    //       parse_mode: "MarkdownV2",
+    //     }),
+    //   },
+    // );
 
-    if (!res.ok) {
-      throw new Error(await res.text());
-    }
+    // if (!res.ok) {
+    //   throw new Error(await res.text());
+    // }
   },
 });
 

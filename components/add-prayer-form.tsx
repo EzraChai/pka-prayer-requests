@@ -29,6 +29,7 @@ import { Switch } from "./ui/switch";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Check, LoaderCircle } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -42,7 +43,13 @@ const formSchema = z.object({
   color: z.enum(["white", "yellow", "cyan", "red", "green"]),
 });
 
-export function AddNewPrayerForm() {
+export function AddNewPrayerForm({
+  cellGroupId,
+  cellGroupName,
+}: {
+  cellGroupId?: Id<"cell_groups">;
+  cellGroupName?: string;
+}) {
   const addPrayerRequest = useAction(api.functions.checkAndAddPrayer);
   const context = use(LanguageContext);
   const [open, setOpen] = useState(false);
@@ -72,6 +79,7 @@ export function AddNewPrayerForm() {
         await addPrayerRequest({
           ...value,
           userId: userId ?? "",
+          cellGroupId,
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
         });
@@ -106,7 +114,10 @@ export function AddNewPrayerForm() {
               ${color === "green" && "bg-lime-200"}`}
           >
             <DialogHeader>
-              <DialogTitle>New Prayer Request</DialogTitle>
+              <DialogTitle>
+                New Prayer Request
+                {cellGroupName ? ` · ${cellGroupName}` : ""}
+              </DialogTitle>
             </DialogHeader>
             <form
               id="prayer-request-form"
@@ -338,7 +349,7 @@ export function AddNewPrayerForm() {
               <Button
                 disabled={form.state.isSubmitting}
                 type="submit"
-                className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} ${color === "green" && "bg-lime-300 hover:bg-lime-300"} text-neutral-800 border-2`}
+                className={`${(color === "yellow" || color === "white") && "bg-yellow-300 hover:bg-yellow-300"} ${color === "cyan" && "bg-cyan-300 hover:bg-cyan-300"} ${color === "red" && "bg-red-300 hover:bg-red-300"} ${color === "green" && "bg-lime-300 hover:bg-lime-300"} text-black border-2`}
                 form="prayer-request-form"
               >
                 {form.state.isSubmitting ? (

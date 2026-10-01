@@ -74,6 +74,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
           ...value,
           id: prayer._id,
           userId: userId ?? "",
+          cellGroupId: prayer.cellGroupId,
           username: value.username ?? "",
           expiresAt: value.expiresAt ? value.expiresAt.getTime() : undefined,
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",

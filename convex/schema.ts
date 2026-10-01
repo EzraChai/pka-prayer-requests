@@ -6,6 +6,12 @@ import { v } from "convex/values";
 // app will continue to work.
 // The schema provides more precise TypeScript types.
 export default defineSchema({
+  cell_groups: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    createdAt: v.number(),
+  }).index("by_slug", ["slug"]),
+
   users: defineTable({
     userId: v.string(),
     createdAt: v.number(),
@@ -29,10 +35,12 @@ export default defineSchema({
     prayedCount: v.number(),
     isPublic: v.boolean(),
     createdBy: v.id("users"),
+    cellGroupId: v.optional(v.id("cell_groups")),
     createdAt: v.number(),
   })
     .index("by_createdAtAndIsPublic", ["isPublic", "createdAt"])
     .index("by_createdBy", ["createdBy"])
+    .index("by_cellGroup", ["cellGroupId", "createdAt"])
     .index("by_expiresAt", ["expiresAt"]),
 
   prayer_clicks: defineTable({
