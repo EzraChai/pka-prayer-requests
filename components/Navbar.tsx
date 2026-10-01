@@ -57,6 +57,8 @@ export default function Navbar() {
           <Zap fill="white" />
         </Button>
         <span className="">PRAYERCARE</span>
+        <span className="text-[8px] -ml-1 mt-2 font-normal italic">by</span>
+        <span className="text-[8px] -ml-2 mt-2 font-bold not-italic">PKA</span>
       </Link>
       <div className="md:hidden"></div>
       <div className="hidden md:flex items-center">

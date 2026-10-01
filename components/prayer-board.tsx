@@ -71,18 +71,14 @@ export default function PrayerBoard({
 
       <section className="relative mx-auto w-full max-w-7xl">
         <div className="flex max-w-3xl items-start gap-3 sm:gap-4">
-          <div
-            aria-hidden="true"
-            className="mt-1 flex size-10 shrink-0 -rotate-6 items-center justify-center border-3 border-black bg-lime-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:size-12"
-          >
-            <BookHeart className="size-6" strokeWidth={2.5} />
-          </div>
           <div>
             <p className="font-mono text-xs font-bold uppercase tracking-[0.2em]">
               {cellGroupName ? "Private circle" : "A place to pray"}
             </p>
             <h1 className="mt-2 break-words text-4xl font-black leading-[0.92] tracking-[-0.04em] sm:text-5xl md:text-6xl">
-              {cellGroupName ? `${cellGroupName} Prayer Board` : "PKA Prayer Care"}
+              {cellGroupName
+                ? `${cellGroupName} Prayer Board`
+                : "PKA Prayer Care"}
             </h1>
           </div>
         </div>
@@ -117,8 +113,8 @@ export default function PrayerBoard({
               <div className="mx-auto mt-28 max-w-md border-3 border-black bg-white p-8 text-center shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] md:mt-36">
                 <p className="text-2xl font-black">The board is quiet.</p>
                 <p className="mt-3 leading-6 text-black/65">
-                  Be the first to share a prayer and make space for someone
-                  else to say amen.
+                  Be the first to share a prayer and make space for someone else
+                  to say amen.
                 </p>
               </div>
             )}
@@ -133,9 +129,8 @@ export default function PrayerBoard({
       {lang === "en" && (
         <div className="relative mx-auto mt-16 w-full max-w-7xl text-center text-xs text-neutral-500 md:text-left">
           <p>
-            ESV® Bible (The Holy Bible, English Standard Version®), <br />©
-            2001 by Crossway, a publishing ministry of Good News Publishers.{" "}
-            <br />
+            ESV® Bible (The Holy Bible, English Standard Version®), <br />© 2001
+            by Crossway, a publishing ministry of Good News Publishers. <br />
             Used by permission. All rights reserved.
           </p>
           <Link href="https://www.esv.org/">
