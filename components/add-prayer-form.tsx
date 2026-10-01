@@ -30,6 +30,7 @@ import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Check, LoaderCircle } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
+import { getPrayerSubmissionErrorMessage } from "@/lib/prayer-errors";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -84,9 +85,7 @@ export function AddNewPrayerForm({
           color: value.color as "white" | "yellow" | "cyan" | "red" | "green",
         });
       } catch (error) {
-        toast.error(
-          (error as Error).message || "Failed to submit prayer request",
-        );
+        toast.error(getPrayerSubmissionErrorMessage(error));
         return;
       }
 

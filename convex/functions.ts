@@ -408,7 +408,6 @@ export const checkAndAddPrayer = action({
     const isProfanity = await checkProfanity(
       args.title.concat(" ", args.content),
     );
-    console.log("Profanity check result:", isProfanity);
 
     if (isProfanity === true) {
       throw new Error("Profanity detected in prayer request.");
