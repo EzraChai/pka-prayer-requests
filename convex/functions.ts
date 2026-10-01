@@ -696,5 +696,5 @@ async function checkProfanity(text: string): Promise<boolean> {
   }
 
   const data = await res.json();
-  return data.isProfanity === true;
+  return data.score > 0.8;
 }
