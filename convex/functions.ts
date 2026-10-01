@@ -405,6 +405,9 @@ export const checkAndAddPrayer = action({
       }
     }
 
+    console.log(
+      `Checking for profanity in prayer request: ${args.title} ${args.content}`,
+    );
     const isProfanity = await checkProfanity(
       args.title.concat(" ", args.content),
     );
