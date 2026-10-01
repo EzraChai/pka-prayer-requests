@@ -663,7 +663,6 @@ ${
   args.bibleVerseCUVS &&
   `
 📖 _${BIBLE_BOOKS.find((book) => book.abbr === args.bibleVerseRef?.split(" ")[0])?.engName} ${args.bibleVerseRef?.split(" ")[1]}_
-
 _${escapeTelegramMarkdown(args.bibleVerseESV)}_
 _${escapeTelegramMarkdown(args.bibleVerseCUVS)}_
     `
