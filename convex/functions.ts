@@ -693,23 +693,22 @@ export const sendToTelegram = action({
     message: v.string(),
   },
   handler: async (_, args) => {
-    return;
-    // const res = await fetch(
-    //   `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`,
-    //   {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       chat_id: "-1003777112746",
-    //       text: args.message,
-    //       parse_mode: "MarkdownV2",
-    //     }),
-    //   },
-    // );
+    const res = await fetch(
+      `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: "-1003777112746",
+          text: args.message,
+          parse_mode: "MarkdownV2",
+        }),
+      },
+    );
 
-    // if (!res.ok) {
-    //   throw new Error(await res.text());
-    // }
+    if (!res.ok) {
+      throw new Error(await res.text());
+    }
   },
 });
 
