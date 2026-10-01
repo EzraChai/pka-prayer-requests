@@ -407,9 +407,6 @@ export const checkAndAddPrayer = action({
       }
     }
 
-    console.log(
-      `Checking for profanity in prayer request: ${args.title.concat(" ", args.content)}`,
-    );
     const isProfanity = await checkProfanity(
       args.title.concat(" ", args.content).concat(" ", username),
     );
@@ -685,19 +682,36 @@ export const sendToTelegram = action({
 });
 
 async function checkProfanity(text: string): Promise<boolean> {
-  const res = await fetch("https://vector.profanity.dev", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message: text }),
-  });
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  // Keep one word below the documented limit because the API rejects some
+  // exactly-35-word messages at its boundary.
+  const maxWordsPerRequest = 34;
 
-  if (!res.ok) {
-    throw new Error(`Profanity check failed with status ${res.status}.`);
+  for (
+    let start = 0;
+    start < words.length;
+    start += maxWordsPerRequest
+  ) {
+    const message = words
+      .slice(start, start + maxWordsPerRequest)
+      .join(" ");
+    const res = await fetch("https://vector.profanity.dev", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Profanity check failed with status ${res.status}.`);
+    }
+
+    const data = await res.json();
+    if (data.isProfanity === true) {
+      return true;
+    }
   }
 
-  const data = await res.json();
-  console.log("Profanity check response:", data);
-  return data.score > 0.85;
+  return false;
 }
