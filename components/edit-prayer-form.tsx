@@ -273,7 +273,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                         <button
                           type="button"
                           onClick={() => field.handleChange("yellow")}
-                          className="bg-yellow-300 w-4 h-4 border-neutral-800 border"
+                          className="bg-yellow-300 cursor-pointer w-4 h-4 border-neutral-800 border"
                         >
                           {field.state.value === "yellow" && (
                             <Check size={"sm"} />
@@ -282,7 +282,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                         <button
                           type="button"
                           onClick={() => field.handleChange("white")}
-                          className="bg-white w-4 h-4 border-neutral-800 border"
+                          className="bg-white cursor-pointer w-4 h-4 border-neutral-800 border"
                         >
                           {field.state.value === "white" && (
                             <Check size={"sm"} />
@@ -292,14 +292,14 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                         <button
                           type="button"
                           onClick={() => field.handleChange("red")}
-                          className="bg-red-300 w-4 h-4 border-neutral-800 border"
+                          className="bg-red-300 cursor-pointer w-4 h-4 border-neutral-800 border"
                         >
                           {field.state.value === "red" && <Check size={"sm"} />}
                         </button>
                         <button
                           type="button"
                           onClick={() => field.handleChange("cyan")}
-                          className="bg-cyan-300 w-4 h-4 border-neutral-800 border"
+                          className="bg-cyan-300 cursor-pointer w-4 h-4 border-neutral-800 border"
                         >
                           {field.state.value === "cyan" && (
                             <Check size={"sm"} />
@@ -308,7 +308,7 @@ export function EditPrayerForm({ prayer }: { prayer: Doc<"prayers"> }) {
                         <button
                           type="button"
                           onClick={() => field.handleChange("green")}
-                          className="bg-lime-300 w-4 h-4 border-neutral-800 border"
+                          className="bg-lime-300 cursor-pointer w-4 h-4 border-neutral-800 border"
                         >
                           {field.state.value === "green" && (
                             <Check size={"sm"} />
