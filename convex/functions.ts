@@ -568,7 +568,7 @@ export const checkAndAddPrayer = action({
       createdBy: user._id,
       cellGroupId: args.cellGroupId,
       color: args.color,
-      isPublic: args.isPublic,
+      isPublic: args.cellGroupId ? true : args.isPublic,
     });
   },
 });
@@ -617,6 +617,8 @@ export const addPrayer = internalMutation({
     isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
+    const isCellGroupPrayer = args.cellGroupId !== undefined;
+
     if (args.id) {
       await ctx.db.patch(args.id, {
         content: args.content,
@@ -630,7 +632,7 @@ export const addPrayer = internalMutation({
         createdAt: Date.now(),
         expiresAt: args.expiresAt,
         username: args.username,
-        isPublic: args.isPublic,
+        isPublic: isCellGroupPrayer ? true : args.isPublic,
         cellGroupId: args.cellGroupId,
       });
     } else {
@@ -646,12 +648,13 @@ export const addPrayer = internalMutation({
         createdAt: Date.now(),
         expiresAt: args.expiresAt,
         username: args.username,
-        isPublic: args.isPublic,
+        isPublic: isCellGroupPrayer ? true : args.isPublic,
         cellGroupId: args.cellGroupId,
       });
     }
-    ctx.scheduler.runAfter(0, api.functions.sendToTelegram, {
-      message: `🙏 *New Prayer Request*
+    if (!isCellGroupPrayer) {
+      ctx.scheduler.runAfter(0, api.functions.sendToTelegram, {
+        message: `🙏 *New Prayer Request*
 
 📝 *${escapeTelegramMarkdown(args.title)}*
 
@@ -671,7 +674,8 @@ _${escapeTelegramMarkdown(args.bibleVerseCUVS)}_
 [Open PKA Prayer Care](https://pkaprayercare.vercel.app/)
 
 👤 Submitted by ${args.username ? escapeTelegramMarkdown(args.username) : "Anonymous"}`,
-    });
+      });
+    }
   },
 });
 

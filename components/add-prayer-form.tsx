@@ -326,30 +326,37 @@ export function AddNewPrayerForm({
                     </Field>
                   )}
                 </form.Field>
-                <form.Field name="isPublic">
-                  {(field) => (
-                    <Field orientation="horizontal">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Public</FieldLabel>
-                        <FieldDescription className="text-xs">
-                          Public prayers will be shown on the prayer board.{" "}
-                          <br />
-                          Private prayers are only visible to you &{" "}
-                          <span className="font-semibold text-neutral-700">
-                            PKA EXCOs
-                          </span>
-                          .
-                        </FieldDescription>
-                      </FieldContent>
-                      <Switch
-                        id={field.name}
-                        name={field.name}
-                        checked={field.state.value}
-                        onCheckedChange={field.handleChange}
-                      />
-                    </Field>
-                  )}
-                </form.Field>
+                {cellGroupId ? (
+                  <FieldDescription className="text-xs">
+                    This prayer will be public on the {cellGroupName} prayer
+                    board and will not be sent to PKA EXCOs.
+                  </FieldDescription>
+                ) : (
+                  <form.Field name="isPublic">
+                    {(field) => (
+                      <Field orientation="horizontal">
+                        <FieldContent>
+                          <FieldLabel htmlFor={field.name}>Public</FieldLabel>
+                          <FieldDescription className="text-xs">
+                            Public prayers will be shown on the prayer board.{" "}
+                            <br />
+                            Private prayers are only visible to you &{" "}
+                            <span className="font-semibold text-neutral-700">
+                              PKA EXCOs
+                            </span>
+                            .
+                          </FieldDescription>
+                        </FieldContent>
+                        <Switch
+                          id={field.name}
+                          name={field.name}
+                          checked={field.state.value}
+                          onCheckedChange={field.handleChange}
+                        />
+                      </Field>
+                    )}
+                  </form.Field>
+                )}
               </FieldGroup>
             </form>
             <Field className="justify-end" orientation="horizontal">

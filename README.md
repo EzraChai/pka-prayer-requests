@@ -32,6 +32,8 @@ available at:
 Prayers submitted from a cell-group link stay on that group's board and do not
 appear on the main prayer board. They remain visible in **My Prayers** under
 **Cell-group prayer boards**, with the originating group shown on each prayer.
+Cell-group prayers are always public on their own board and are not forwarded
+to the PKA EXCO Telegram notification channel.
 
 If you're reading this README on GitHub and want to use this template, run:
 
