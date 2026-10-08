@@ -121,9 +121,7 @@ export default function CellGroupPage({ slug }: { slug: string }) {
               className="mt-5 flex items-start gap-3 border-3 border-black bg-red-100 p-3 text-sm font-bold text-red-900"
             >
               <ShieldAlert className="mt-0.5 size-5 shrink-0" />
-              <p>
-                That code didn&apos;t work. Check the digits and try again.
-              </p>
+              <p>That code didn&apos;t work. Check the digits and try again.</p>
             </div>
           )}
           <Button
@@ -133,9 +131,6 @@ export default function CellGroupPage({ slug }: { slug: string }) {
           >
             Unlock prayer board
           </Button>
-          <p className="mt-4 text-center text-xs font-medium text-black/60">
-            Need the code? Ask someone in your cell group.
-          </p>
         </form>
       </main>
     );
