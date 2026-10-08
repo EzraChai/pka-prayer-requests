@@ -113,8 +113,7 @@ export default function PrayerBoard({
               <div className="mx-auto mt-28 max-w-md border-3 border-black bg-white p-8 text-center shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] md:mt-36">
                 <p className="text-2xl font-black">The board is quiet.</p>
                 <p className="mt-3 leading-6 text-black/65">
-                  Be the first to share a prayer and make space for someone else
-                  to say amen.
+                  Be the first to share a prayer.
                 </p>
               </div>
             )}
